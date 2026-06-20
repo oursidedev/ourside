@@ -6,6 +6,7 @@ import { ToastProvider } from "@/components/ui/ToastProvider";
 import { NavigationFeedback } from "@/components/ui/NavigationFeedback";
 import { DialogProvider } from "@/components/shared/dialogs/DialogProvider";
 import { BRAND } from "@/config/brand";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -18,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" suppressHydrationWarning><body className={`${manrope.variable} ${playfair.variable} font-sans antialiased`}><LocaleProvider><ToastProvider><DialogProvider><NavigationFeedback /><div className="noise pointer-events-none fixed inset-0 -z-10" />{children}</DialogProvider></ToastProvider></LocaleProvider></body></html>;
+  return <html lang="en" suppressHydrationWarning><body className={`${manrope.variable} ${playfair.variable} font-sans antialiased`}><LocaleProvider><ToastProvider><DialogProvider><NavigationFeedback /><AnalyticsTracker /><div className="noise pointer-events-none fixed inset-0 -z-10" />{children}</DialogProvider></ToastProvider></LocaleProvider></body></html>;
 }

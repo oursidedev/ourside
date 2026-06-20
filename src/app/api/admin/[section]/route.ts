@@ -1,0 +1,2 @@
+import { NextRequest,NextResponse } from "next/server";import { getAdminSection,getSystemHealth,requireAdmin } from "@/features/admin/admin.server";
+export async function GET(request:NextRequest,{params}:{params:Promise<{section:string}>}){try{await requireAdmin();const {section}=await params;if(section==="system")return NextResponse.json({rows:getSystemHealth()});const rows=await getAdminSection(section,request.nextUrl.searchParams.get("q")||"");return NextResponse.json({rows});}catch{return NextResponse.json({error:"Not found"},{status:404});}}

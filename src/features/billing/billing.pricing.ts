@@ -1,7 +1,4 @@
-import type { BillingInterval, PlanSlug } from "./billing.types";
 export type BillingRegion="US"|"TR"|"EU"|"GB"|"CA"|"AU";
 export const REGION_BY_LOCALE={en:"US",tr:"TR",de:"EU",es:"EU",fr:"EU"} as const;
-export const REGIONAL_PRICES:Record<BillingRegion,{label:string;currency:string;locale:string;monthly:number;yearly:number;lifetime:number}>={
- US:{label:"United States",currency:"USD",locale:"en-US",monthly:5.99,yearly:59.99,lifetime:179},TR:{label:"Türkiye",currency:"TRY",locale:"tr-TR",monthly:199,yearly:1990,lifetime:5990},EU:{label:"European Union",currency:"EUR",locale:"de-DE",monthly:5.49,yearly:54.99,lifetime:169},GB:{label:"United Kingdom",currency:"GBP",locale:"en-GB",monthly:4.99,yearly:49.99,lifetime:149},CA:{label:"Canada",currency:"CAD",locale:"en-CA",monthly:7.99,yearly:79.99,lifetime:239},AU:{label:"Australia",currency:"AUD",locale:"en-AU",monthly:8.99,yearly:89.99,lifetime:269}
-};
-export function formatPlanPrice(region:BillingRegion,plan:PlanSlug,interval:BillingInterval){if(plan==="free")return new Intl.NumberFormat(REGIONAL_PRICES[region].locale,{style:"currency",currency:REGIONAL_PRICES[region].currency,maximumFractionDigits:0}).format(0);const value=plan==="lifetime"?REGIONAL_PRICES[region].lifetime:REGIONAL_PRICES[region][interval==="monthly"?"monthly":"yearly"];return new Intl.NumberFormat(REGIONAL_PRICES[region].locale,{style:"currency",currency:REGIONAL_PRICES[region].currency}).format(value);}
+// Regional metadata is static; monetary values always come from public.plans.
+export const REGION_META:Record<BillingRegion,{label:string;currency:string;locale:string}>={US:{label:"United States",currency:"USD",locale:"en-US"},TR:{label:"Türkiye",currency:"TRY",locale:"tr-TR"},EU:{label:"European Union",currency:"EUR",locale:"de-DE"},GB:{label:"United Kingdom",currency:"GBP",locale:"en-GB"},CA:{label:"Canada",currency:"CAD",locale:"en-CA"},AU:{label:"Australia",currency:"AUD",locale:"en-AU"}};

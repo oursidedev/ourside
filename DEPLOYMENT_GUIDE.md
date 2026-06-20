@@ -14,3 +14,7 @@ Configure Vercel Production variables from `.env.example`. Required public URLs 
 6. Verify `/`, `/pricing`, `/privacy`, `/login`, `/dashboard`, `/join`, and an invite URL on their intended hosts.
 
 Build gates are `npm run typecheck`, `npm run lint`, and `npm run build`. Marketing does not need app session cookies. Supabase sessions may remain scoped to the app host, which reduces cross-domain cookie complexity.
+
+## Admin and dynamic plans
+
+Set `ADMIN_EMAILS`, `NEXT_PUBLIC_ANALYTICS_ENABLED`, `ANALYTICS_LIVE_WINDOW_SECONDS`, `BILLING_PROVIDER` and `NEXT_PUBLIC_PUBLIC_PLANS_ENABLED` in Vercel. Apply `202606200015_admin_dynamic_plans.sql` before deploying the matching web build. Verify `/api/public/plans`, owner access to `/admin`, normal-user denial, dynamic pricing and a quota rejection before release.

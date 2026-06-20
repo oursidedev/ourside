@@ -9,8 +9,8 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { BRAND } from "@/config/brand";
 
-const APP_PREFIXES = ["/login", "/signup", "/forgot-password", "/reset-password", "/auth", "/complete-profile", "/onboarding", "/dashboard", "/memories", "/gallery", "/vault", "/milestones", "/bucket-list", "/settings", "/checkout", "/invite", "/join"];
-const PROTECTED_PREFIXES = ["/dashboard", "/memories", "/gallery", "/vault", "/milestones", "/bucket-list", "/settings", "/onboarding", "/complete-profile", "/checkout"];
+const APP_PREFIXES = ["/login", "/signup", "/forgot-password", "/reset-password", "/auth", "/complete-profile", "/onboarding", "/dashboard", "/memories", "/gallery", "/vault", "/milestones", "/bucket-list", "/settings", "/checkout", "/invite", "/join", "/admin"];
+const PROTECTED_PREFIXES = ["/dashboard", "/memories", "/gallery", "/vault", "/milestones", "/bucket-list", "/settings", "/onboarding", "/complete-profile", "/checkout", "/admin"];
 const PARTNER_PREFIXES = ["/memories", "/gallery", "/vault", "/milestones", "/bucket-list"];
 const MARKETING_PATHS = ["/pricing", "/privacy", "/terms", "/contact"];
 

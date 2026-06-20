@@ -1,0 +1,2 @@
+import { AdminHeader } from "@/components/admin/AdminUI";import { PlanManager } from "@/components/admin/PlanManager";import { getAdminPlans } from "@/features/admin/admin.server";
+export default async function PlansPage(){const plans=await getAdminPlans();return <><AdminHeader title="Plans and limits" description="One source of truth for public pricing, app upgrade UI and database-enforced product limits."/><PlanManager initialPlans={plans}/></>}
