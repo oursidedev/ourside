@@ -1,0 +1,2 @@
+import { AdminHeader } from "@/components/admin/AdminUI";import { ErrorTable } from "@/components/admin/ErrorTable";import { getAdminSection } from "@/features/admin/admin.server";
+export default async function ErrorsPage(){const rows=await getAdminSection("errors") as Record<string,unknown>[];return <><AdminHeader title="Errors" description="Sanitized runtime errors. Private payloads, content and tokens are never shown."/><ErrorTable rows={rows}/></>}

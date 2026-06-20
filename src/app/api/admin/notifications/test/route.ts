@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";import { requireAdmin } from "@/features/admin/admin.server";import { createServerSupabaseClient } from "@/lib/supabase/server";
+export async function POST(){try{await requireAdmin();const db=await createServerSupabaseClient();const {data,error}=await db!.rpc("admin_send_test_notification");if(error)throw error;return NextResponse.json({ok:true,id:data});}catch(cause){return NextResponse.json({error:cause instanceof Error?cause.message:"Test failed"},{status:400});}}

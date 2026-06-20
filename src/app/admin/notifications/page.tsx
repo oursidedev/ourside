@@ -1,0 +1,2 @@
+import { AdminHeader,DataTable } from "@/components/admin/AdminUI";import { TestNotificationButton } from "@/components/admin/TestNotificationButton";import { getAdminSection } from "@/features/admin/admin.server";
+export default async function NotificationsPage(){const rows=await getAdminSection("notifications") as Record<string,unknown>[];return <><AdminHeader title="Notifications" description="Delivery metadata and safe test actions. Provider secrets never enter the browser." action={<TestNotificationButton/>}/><DataTable rows={rows}/></>}
