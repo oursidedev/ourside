@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server"; import { getCurrentSubscription } from "@/features/billing/billing.subscription.server"; import { effectivePlan } from "@/features/billing/billing.permissions"; import { MOCK_BILLING_ENABLED } from "@/features/billing/billing.constants";
+export async function GET(){const subscription=await getCurrentSubscription();return NextResponse.json({subscription,plan:effectivePlan(subscription),mockEnabled:MOCK_BILLING_ENABLED});}

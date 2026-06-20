@@ -1,0 +1,1 @@
+import { z } from "zod"; export const notificationListSchema = z.object({ cursor: z.string().nullable().optional(), limit: z.number().int().min(1).max(50).default(20), unreadOnly: z.boolean().default(false) }); export type NotificationListInput = z.infer<typeof notificationListSchema>;

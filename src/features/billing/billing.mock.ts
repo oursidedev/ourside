@@ -1,0 +1,3 @@
+import type { Subscription } from "./billing.types";
+export const mockFreeSubscription: Subscription | null = null;
+export function mockSubscription(overrides: Partial<Subscription> = {}): Subscription { const now=new Date(); const end=new Date(now); end.setFullYear(end.getFullYear()+1); return { id:"00000000-0000-4000-8000-000000000001",userId:"00000000-0000-4000-8000-000000000002",coupleId:null,planId:"00000000-0000-4000-8000-000000000003",planSlug:"plus",provider:"mock",providerCustomerId:"mock_customer",providerSubscriptionId:"mock_subscription",status:"active",currentPeriodStart:now.toISOString(),currentPeriodEnd:end.toISOString(),cancelAtPeriodEnd:false,createdAt:now.toISOString(),updatedAt:now.toISOString(),...overrides}; }

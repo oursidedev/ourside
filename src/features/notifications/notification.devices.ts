@@ -1,0 +1,4 @@
+import { createClient } from "@/lib/supabase/client";
+export async function registerNotificationDevice(input:{platform:"web"|"ios"|"android";provider:string;token:string;deviceName?:string}){const client=createClient();if(!client)throw new Error("Supabase is not configured.");const{data:user}=await client.auth.getUser();if(!user.user)throw new Error("Authentication required.");const{error}=await client.from("notification_devices").upsert({user_id:user.user.id,platform:input.platform,push_provider:input.provider,push_token:input.token,device_name:input.deviceName||null,last_seen_at:new Date().toISOString(),revoked_at:null},{onConflict:"push_token"});if(error)throw error;}
+export async function revokeNotificationDevice(token:string){const client=createClient();if(!client)throw new Error("Supabase is not configured.");const{error}=await client.from("notification_devices").update({revoked_at:new Date().toISOString()}).eq("push_token",token);if(error)throw error;}
+

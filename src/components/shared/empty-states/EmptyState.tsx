@@ -1,0 +1,7 @@
+import type { LucideIcon } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { PremiumButton } from "@/components/ui/PremiumButton";
+
+export function EmptyState({icon:Icon=Sparkles,title,description,actionLabel,actionHref,onAction,secondaryLabel,secondaryHref,onSecondary}:{icon?:LucideIcon;title:string;description:string;actionLabel?:string;actionHref?:string;onAction?:()=>void;secondaryLabel?:string;secondaryHref?:string;onSecondary?:()=>void}){
+ return <section className="relative overflow-hidden rounded-[2rem] border border-dashed bg-gradient-to-br from-paper via-paper to-[#f3e5e2] px-6 py-10 text-center sm:px-10 sm:py-14"><div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-rose/10 blur-3xl"/><span className="relative mx-auto grid h-14 w-14 place-items-center rounded-full bg-wine/10 text-wine"><Icon className="h-6 w-6"/></span><h2 className="relative mt-5 font-serif text-3xl sm:text-4xl">{title}</h2><p className="relative mx-auto mt-3 max-w-lg text-sm leading-6 text-ink/55">{description}</p>{actionLabel&&<div className="relative mt-7 flex flex-col justify-center gap-2 sm:flex-row">{actionHref?<PremiumButton href={actionHref}>{actionLabel}</PremiumButton>:<PremiumButton onClick={onAction}>{actionLabel}</PremiumButton>}{secondaryLabel&&(secondaryHref?<PremiumButton href={secondaryHref} variant="secondary">{secondaryLabel}</PremiumButton>:<PremiumButton onClick={onSecondary} variant="secondary">{secondaryLabel}</PremiumButton>)}</div>}</section>;
+}

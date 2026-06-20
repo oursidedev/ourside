@@ -1,0 +1,2 @@
+import type { PartnerInvitation } from "./invitation.types";
+export const partnerInvitationMock: PartnerInvitation = { id: "invite-demo", coupleId: "couple-demo", invitedBy: "user-one", invitedEmail: "partner@example.com", inviteToken: "11111111-1111-4111-8111-111111111111", status: "pending", expiresAt: "2026-06-26T12:00:00.000Z", acceptedBy: null, acceptedAt: null, createdAt: "2026-06-19T12:00:00.000Z" };

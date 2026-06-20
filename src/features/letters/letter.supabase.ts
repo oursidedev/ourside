@@ -1,0 +1,9 @@
+import { createClient } from "@/lib/supabase/client";
+import { requireCurrentCouple } from "@/features/couples/currentCouple";
+import type { Letter } from "@/types/database";
+import { dispatchNotificationEvent } from "@/features/notifications/notification.events";
+
+export const liveLetterService={
+ async list():Promise<Letter[]>{const client=createClient();if(!client)throw new Error("Supabase is not configured.");const {coupleId}=await requireCurrentCouple(client);const {data,error}=await client.from("letters").select("id,couple_id,author_id,title,encrypted_body,unlock_at").eq("couple_id",coupleId).order("unlock_at");if(error)throw error;const ids=[...new Set((data||[]).map(row=>row.author_id))];const profiles=ids.length?await client.from("profiles").select("id,display_name").in("id",ids):{data:[]};const names=new Map((profiles.data||[]).map(profile=>[profile.id,profile.display_name]));return(data||[]).map(row=>({id:row.id,coupleId:row.couple_id,title:row.title,body:new Date(row.unlock_at)<=new Date()?row.encrypted_body:undefined,unlockAt:row.unlock_at,author:names.get(row.author_id)||"Partner",locked:new Date(row.unlock_at)>new Date()}));},
+ async create(input:{title:string;body:string;unlockAt:string}):Promise<void>{const client=createClient();if(!client)throw new Error("Supabase is not configured.");const {user,coupleId}=await requireCurrentCouple(client);const partner=await client.from("couple_members").select("user_id").eq("couple_id",coupleId).eq("status","active").neq("user_id",user.id).maybeSingle();const {data,error}=await client.from("letters").insert({couple_id:coupleId,author_id:user.id,recipient_id:partner.data?.user_id||null,title:input.title.trim(),encrypted_body:input.body.trim(),unlock_at:new Date(input.unlockAt).toISOString(),status:"scheduled"}).select("id").single();if(error)throw error;void dispatchNotificationEvent({type:"letter_created",coupleId,sourceEntityType:"letter",sourceEntityId:data.id});}
+};

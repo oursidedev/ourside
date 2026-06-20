@@ -1,0 +1,1 @@
+import { AuthLayout } from '@/components/AuthLayout'; import { AuthForm } from '@/components/AuthForm'; export default function Page(){return <AuthLayout eyebrow="Reset your password"><AuthForm mode="forgot"/></AuthLayout>}

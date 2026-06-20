@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes route-progress { from { transform: translateX(-35%); } to { transform: translateX(85%); } }
+.route-progress { animation: route-progress .8s ease-in-out infinite alternate; }
+
+:root { --cream: 250 246 239; --paper: 255 253 249; --ink: 54 38 41; --wine: 113 44 54; --rose: 184 109 115; }
+.dark { --cream: 27 22 24; --paper: 38 30 33; --ink: 248 238 234; --wine: 216 131 138; --rose: 198 125 132; }
+* { border-color: rgb(var(--ink) / .12); }
+html { scroll-behavior: smooth; }
+body { background: rgb(var(--cream)); color: rgb(var(--ink)); }
+::selection { background: rgba(184,109,115,.26); }
+.noise { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E"); }
+.paper-grid { background-image: linear-gradient(rgba(113,44,54,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(113,44,54,.035) 1px,transparent 1px); background-size: 28px 28px; }
+.safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; } }
+@layer components { .focus-ring { @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wine focus-visible:ring-offset-2 focus-visible:ring-offset-cream; } .eyebrow { @apply text-[11px] font-bold uppercase tracking-[.22em] text-wine/70; } }
+@keyframes orbPulse{0%,100%{transform:scale(.92);filter:saturate(.9)}50%{transform:scale(1.05);filter:saturate(1.1)}}
+@keyframes orbOrbit{from{transform:rotate(0deg) translateX(20px) rotate(0deg)}to{transform:rotate(360deg) translateX(20px) rotate(-360deg)}}
+@keyframes warmShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.ourside-skeleton{background:linear-gradient(100deg,rgba(120,56,66,.055) 20%,rgba(255,255,255,.72) 42%,rgba(120,56,66,.055) 64%);background-size:220% 100%;animation:warmShimmer 1.55s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.ourside-skeleton{animation:none}}

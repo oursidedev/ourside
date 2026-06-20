@@ -1,0 +1,3 @@
+import type { CreateBucketItemInput } from "./bucket-list.schema"; import type { BucketListItem } from "./bucket-list.types";
+export interface BucketListRepository { list(coupleId: string): Promise<BucketListItem[]>; create(userId: string, input: CreateBucketItemInput): Promise<BucketListItem>; complete(id: string, userId: string, memoryId?: string): Promise<BucketListItem>; }
+export class BucketListService { constructor(private readonly repository: BucketListRepository) {} list(coupleId: string) { return this.repository.list(coupleId); } create(userId: string, input: CreateBucketItemInput) { return this.repository.create(userId, input); } complete(id: string, userId: string, memoryId?: string) { return this.repository.complete(id, userId, memoryId); } }

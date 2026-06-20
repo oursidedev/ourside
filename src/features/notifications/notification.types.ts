@@ -1,0 +1,6 @@
+export const NOTIFICATION_TYPES = ["welcome","account_created","couple_created","partner_invited","invitation_accepted_by_partner","invitation_accepted_by_me","partner_joined","memory_added","memory_commented","memory_reacted","media_uploaded","letter_created","letter_unlocked","milestone_created","milestone_reminder","anniversary_reminder","bucket_item_added","bucket_item_completed","daily_question_available","daily_question_answered_by_partner","daily_question_both_answered","profile_updated","profile_photo_updated","display_name_updated","password_changed","subscription_started","subscription_cancelled","payment_failed"] as const;
+export type NotificationType=typeof NOTIFICATION_TYPES[number];
+export type NotificationChannel="in_app"|"email"|"push";
+export interface AppNotification{id:string;userId:string;coupleId:string|null;actorUserId:string|null;type:NotificationType;title:string;body:string;actionUrl:string|null;metadata:Record<string,unknown>;readAt:string|null;archivedAt:string|null;createdAt:string;}
+export interface NotificationPreference{channel:NotificationChannel;type:string;enabled:boolean;}
+export interface NotificationEventInput{type:NotificationType;coupleId?:string|null;sourceEntityType?:string;sourceEntityId?:string;metadata?:Record<string,unknown>;confirmation?:boolean;}
