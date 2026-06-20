@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { PublicPageShell } from "@/components/marketing/PublicPageShell";
+import { BRAND, marketingUrl } from "@/config/brand";
+export const metadata: Metadata = { title: "Terms", alternates: { canonical: marketingUrl("/terms") } };
+export default function Page(){return <PublicPageShell title="Terms made human." intro="These terms describe the basic rules for using Ourside responsibly and keeping the private space safe."><section><h2 className="font-serif text-3xl">Your account</h2><p className="mt-3">Keep your credentials secure and only invite the partner intended to share your couple space.</p></section><section><h2 className="font-serif text-3xl">Your content</h2><p className="mt-3">You retain responsibility for content you upload. Do not upload unlawful content or material you do not have permission to use.</p></section><p>Questions can be sent to <a className="font-bold text-wine" href={`mailto:${BRAND.supportEmail}`}>{BRAND.supportEmail}</a>.</p></PublicPageShell>}

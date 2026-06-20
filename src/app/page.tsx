@@ -18,6 +18,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { PricingSection } from "@/components/PricingSection";
 import { Bilingual } from "@/components/Bilingual";
 import { images } from "@/data/mock";
+import { appUrl, marketingUrl } from "@/config/brand";
 const features = [
   [
     Camera,
@@ -77,10 +78,10 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-3">
             <LanguageSwitcher compact />
-            <Link href="/login" className="hidden text-sm font-bold sm:block">
+            <Link href={appUrl("/login")} className="hidden text-sm font-bold sm:block">
               <Bilingual en="Sign in" tr="Giriş yap" />
             </Link>
-            <PremiumButton href="/signup" className="hidden sm:inline-flex">
+            <PremiumButton href={appUrl("/signup")} className="hidden sm:inline-flex">
               <Bilingual en="Create your Ourside" tr="Ourside'ınızı oluşturun" />
             </PremiumButton>
             <Menu className="sm:hidden" />
@@ -97,7 +98,7 @@ export default function Landing() {
               <Bilingual en="Ourside is a private space for couples to keep photos, letters, milestones, and every little moment that becomes part of their story." tr="Ourside; çiftlerin fotoğraflarını, mektuplarını, dönüm noktalarını ve hikâyelerinin parçası olan tüm küçük anları saklayabildiği özel bir alandır." />
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <PremiumButton href="/signup" className="px-8">
+              <PremiumButton href={appUrl("/signup")} className="px-8">
                 <Bilingual en="Create Your Ourside" tr="Ourside'ınızı oluşturun" />
               </PremiumButton>
               <PremiumButton href="#story" variant="secondary">
@@ -258,7 +259,7 @@ export default function Landing() {
               Seal a letter for an anniversary, a hard day, or a version of you
               that hasn’t arrived yet.
             </p>
-            <PremiumButton href="/vault" className="mt-8">
+            <PremiumButton href={appUrl("/vault")} className="mt-8">
               Write a future letter
             </PremiumButton>
           </div>
@@ -300,7 +301,7 @@ export default function Landing() {
           <Bilingual en="The best memories rarely announce themselves." tr="En güzel anılar genellikle kendini önceden belli etmez." />
         </p>
         <PremiumButton
-          href="/signup"
+          href={appUrl("/signup")}
           className="mt-8 bg-[#f4ded8] text-wine hover:bg-white"
         >
           Create Our Space
@@ -309,11 +310,11 @@ export default function Landing() {
       <footer className="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-12 text-sm text-ink/55 md:flex-row md:items-center md:justify-between">
         <Logo />
         <div className="flex flex-wrap gap-6">
-          <a>Product</a>
-          <a>Privacy</a>
-          <a>Support</a>
+          <a href="#features">Product</a>
+          <Link href={marketingUrl("/privacy")}>Privacy</Link>
+          <Link href={marketingUrl("/contact")}>Support</Link>
           <a>Instagram</a>
-          <a>Terms</a>
+          <Link href={marketingUrl("/terms")}>Terms</Link>
         </div>
         <div className="flex items-center gap-6">
           <LanguageSwitcher />

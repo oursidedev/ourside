@@ -5,6 +5,7 @@
  */
 import { createClient } from "@/lib/supabase/client";
 import { dispatchNotificationEvent } from "@/features/notifications/notification.events";
+import { runtimeAppUrl } from "@/config/brand";
 
 export type AuthResult = { ok: true; requiresEmailConfirmation?: boolean } | { ok: false; message: string; code?: "email_exists" };
 type OAuthProvider = "google" | "apple";
@@ -45,7 +46,7 @@ export const authService = {
           last_name: input.lastName,
           display_name: `${input.firstName} ${input.lastName}`.trim(),
         },
-        emailRedirectTo: input.redirectTo || `${location.origin}/onboarding`,
+        emailRedirectTo: input.redirectTo || runtimeAppUrl("/onboarding"),
       },
     });
     if (error) {
@@ -117,7 +118,7 @@ export const authService = {
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${location.origin}/reset-password`,
+      redirectTo: runtimeAppUrl("/reset-password"),
     });
     return error ? { ok: false, message: error.message } : { ok: true };
   },

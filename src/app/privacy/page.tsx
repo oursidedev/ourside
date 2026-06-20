@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { PublicPageShell } from "@/components/marketing/PublicPageShell";
+import { BRAND, marketingUrl } from "@/config/brand";
+export const metadata: Metadata = { title: "Privacy", alternates: { canonical: marketingUrl("/privacy") } };
+export default function Page(){return <PublicPageShell title="Your story stays yours." intro="Ourside is built as a private space for two people. This page summarizes how account and memory data is handled."><section><h2 className="font-serif text-3xl">Private by design</h2><p className="mt-3">Couple content is limited to authenticated members of that couple space. Private media is designed for signed access rather than public URLs.</p></section><section><h2 className="font-serif text-3xl">Your choices</h2><p className="mt-3">You can manage profile, privacy and notification preferences in the app. Export and deletion controls remain available from Settings.</p></section><p>For privacy questions, contact <a className="font-bold text-wine" href={`mailto:${BRAND.supportEmail}`}>{BRAND.supportEmail}</a>.</p></PublicPageShell>}

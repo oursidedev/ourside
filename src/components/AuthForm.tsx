@@ -10,6 +10,7 @@ import { PremiumButton } from "./ui/PremiumButton";
 import { authService } from "@/features/auth/auth.service";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { passwordSchema } from "@/lib/validations/schemas";
+import { runtimeAppUrl } from "@/config/brand";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -68,7 +69,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           lastName: String(data.get("lastName") || "").trim(),
           email,
           password: pass,
-          redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(nextPath())}`,
+          redirectTo: runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(nextPath())}`),
         })
       : mode === "login"
         ? await authService.signIn({ email, password: pass })
@@ -101,7 +102,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setBusy(true);
     setMessage(null);
     const destination = nextPath();
-    const callback = `${location.origin}/auth/callback?next=${encodeURIComponent(destination)}`;
+    const callback = runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`);
     const result = await authService.signInWithOAuth(provider, callback);
     if (!result.ok) {
       setBusy(false);
@@ -183,7 +184,7 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
   async function resend() {
     setBusy(true);
     setMessage(null);
-    const result = await authService.resendSignupConfirmation(email, `${location.origin}/auth/callback?next=${encodeURIComponent(destination)}`);
+    const result = await authService.resendSignupConfirmation(email, runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`));
     setBusy(false);
     setMessage(result.ok
       ? (tr ? "Doğrulama e-postası yeniden gönderildi." : "The verification email has been sent again.")
