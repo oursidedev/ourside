@@ -10,7 +10,7 @@ SMTP credentials belong only in Supabase Dashboard. Never place the SMTP passwor
 
 1. Create or sign in to a Resend account.
 2. Add `getourside.com`, or use `mail.getourside.com` if email reputation should be isolated on a subdomain.
-3. In Hostinger DNS, add the SPF and DKIM records shown by Resend. Add DMARC if Resend recommends it. Copy the exact values from Resend; DNS values are unique and must not be invented.
+3. Add the SPF and DKIM records shown by Resend in the **authoritative DNS provider**. For Ourside this is currently Vercel DNS, not Hostinger. In Vercel open Domains → `getourside.com` → DNS Records, then copy each Resend record's exact type, name, and value. Add DMARC if Resend recommends it. DNS values are unique and must not be invented.
 4. Wait until Resend marks the domain as verified.
 5. Create a Resend API key and keep it private.
 6. Open Supabase Dashboard → Authentication → SMTP Settings and enable custom SMTP:
@@ -51,7 +51,7 @@ Open Authentication → Email Templates and update Confirm signup, Reset passwor
 1. Create Resend account.
 2. Add getourside.com or mail.getourside.com to Resend.
 3. Copy DNS records from Resend.
-4. Add DNS records in Hostinger.
+4. Add DNS records in Vercel because `getourside.com` currently uses Vercel DNS nameservers.
 5. Wait for Resend domain verification.
 6. Create Resend API key.
 7. Open Supabase dashboard.
@@ -79,4 +79,3 @@ Open Authentication → Email Templates and update Confirm signup, Reset passwor
 - Never expose `RESEND_API_KEY`, SMTP passwords, `SUPABASE_SERVICE_ROLE_KEY`, auth tokens, reset tokens, or invite tokens.
 - Do not log callback URLs containing tokens and do not store confirmation tokens.
 - `EMAIL_PROVIDER` and `RESEND_API_KEY` in the app environment are reserved for app-generated notification email. They do not configure Supabase Auth SMTP.
-

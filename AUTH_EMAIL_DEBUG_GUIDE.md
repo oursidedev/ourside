@@ -8,7 +8,7 @@ When signup or password-reset email fails:
 4. Check Authentication → SMTP Settings and confirm custom SMTP is enabled.
 5. Confirm the Resend domain is verified.
 6. Check Resend delivery logs.
-7. Check the Hostinger DNS records against the exact records supplied by Resend.
+7. Check the Vercel DNS records against the exact records supplied by Resend. Hostinger records have no effect while Vercel nameservers are authoritative.
 8. Confirm SPF and DKIM are active; check DMARC if configured.
 9. Test signup with a fresh email address.
 10. Test password reset independently.
@@ -24,4 +24,3 @@ The central mapper at `src/features/auth/auth-errors.ts` converts Supabase varia
 ## What not to log
 
 Do not log SMTP/API keys, sessions, password-reset links, confirmation links, callback query strings, passwords, or invite tokens. Use timestamps, a safe error category, and the affected auth operation when diagnosing delivery.
-
