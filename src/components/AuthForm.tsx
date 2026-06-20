@@ -11,6 +11,8 @@ import { authService } from "@/features/auth/auth.service";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { passwordSchema } from "@/lib/validations/schemas";
 import { runtimeAppUrl } from "@/config/brand";
+import { AUTH_EMAIL_RESEND_COOLDOWN_SECONDS } from "@/features/auth/auth.constants";
+import { getAuthErrorMessage, type AuthErrorCode } from "@/features/auth/auth-errors";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -63,23 +65,27 @@ export function AuthForm({ mode }: { mode: Mode }) {
       return;
     }
 
-    const result = mode === "signup"
-      ? await authService.signUp({
-          firstName: String(data.get("firstName") || "").trim(),
-          lastName: String(data.get("lastName") || "").trim(),
-          email,
-          password: pass,
-          redirectTo: runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(nextPath())}`),
-        })
-      : mode === "login"
-        ? await authService.signIn({ email, password: pass })
-        : await authService.resetPassword(email);
-
-    setBusy(false);
+    let result;
+    try {
+      result = mode === "signup"
+        ? await authService.signUp({
+            firstName: String(data.get("firstName") || "").trim(),
+            lastName: String(data.get("lastName") || "").trim(),
+            email,
+            password: pass,
+            redirectTo: runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(nextPath())}`),
+          })
+        : mode === "login"
+          ? await authService.signIn({ email, password: pass })
+          : await authService.resetPassword(email);
+    } catch {
+      result = { ok: false as const, code: "network_error" as AuthErrorCode, message: "" };
+    } finally {
+      setBusy(false);
+    }
     if (!result.ok) {
-      setMessage(result.code === "email_exists"
-        ? (tr ? "Bu e-posta adresiyle zaten bir hesap var. Lütfen giriş yapın veya şifrenizi sıfırlayın." : "An account already exists with this email address. Please sign in or reset your password.")
-        : result.message);
+      const action = mode === "forgot" ? "password_reset" : mode === "signup" ? "verification" : "generic";
+      setMessage(result.code ? getAuthErrorMessage(result.code, tr ? "tr" : "en", action) : result.message);
       return;
     }
 
@@ -88,7 +94,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
       else router.push(nextPath());
     }
     else if (mode === "login") router.push(nextPath());
-    else setMessage(tr ? "Şifre sıfırlama bağlantısı gönderildi." : "A secure reset link is on its way.");
+    else setMessage(tr
+      ? "Bu e-posta adresine ait bir hesap varsa şifre sıfırlama bağlantısı gönderdik."
+      : "If an account exists for this email, we sent a password reset link.");
   }
 
   async function socialSignIn(provider: "google" | "apple") {
@@ -106,7 +114,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
     const result = await authService.signInWithOAuth(provider, callback);
     if (!result.ok) {
       setBusy(false);
-      setMessage(result.message);
+      setMessage(result.code ? getAuthErrorMessage(result.code, tr ? "tr" : "en") : result.message);
     }
   }
 
@@ -180,15 +188,41 @@ export function AuthForm({ mode }: { mode: Mode }) {
 function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: boolean; destination: string }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    const key = `ourside:auth-email-cooldown:${email}`;
+    const stored = Number(localStorage.getItem(key) || 0);
+    const expiresAt = stored > Date.now() ? stored : Date.now() + AUTH_EMAIL_RESEND_COOLDOWN_SECONDS * 1000;
+    localStorage.setItem(key, String(expiresAt));
+    setCooldown(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
+  }, [email]);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = window.setInterval(() => setCooldown((current) => Math.max(0, current - 1)), 1000);
+    return () => window.clearInterval(timer);
+  }, [cooldown]);
 
   async function resend() {
+    if (busy || cooldown > 0) return;
     setBusy(true);
     setMessage(null);
-    const result = await authService.resendSignupConfirmation(email, runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`));
-    setBusy(false);
-    setMessage(result.ok
-      ? (tr ? "Doğrulama e-postası yeniden gönderildi." : "The verification email has been sent again.")
-      : result.message);
+    const expiresAt = Date.now() + AUTH_EMAIL_RESEND_COOLDOWN_SECONDS * 1000;
+    localStorage.setItem(`ourside:auth-email-cooldown:${email}`, String(expiresAt));
+    setCooldown(AUTH_EMAIL_RESEND_COOLDOWN_SECONDS);
+    try {
+      const result = await authService.resendSignupConfirmation(email, runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`));
+      setMessage(result.ok
+        ? (tr ? "Doğrulama e-postası yeniden gönderildi." : "The verification email has been sent again.")
+        : result.code
+          ? getAuthErrorMessage(result.code, tr ? "tr" : "en", "verification")
+          : result.message);
+    } catch {
+      setMessage(getAuthErrorMessage("network_error", tr ? "tr" : "en"));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -202,8 +236,12 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
         {tr ? "E-posta görünmüyorsa spam veya gereksiz klasörünü kontrol edin." : "If you cannot see it, check your spam or junk folder."}
       </div>
       {message && <div role="status" className="mt-4 rounded-xl border border-wine/15 bg-white p-3 text-sm text-wine">{message}</div>}
-      <PremiumButton type="button" variant="secondary" disabled={busy} ariaBusy={busy} onClick={resend} className="mt-5 w-full">
-        {busy ? (tr ? "Gönderiliyor…" : "Sending…") : (tr ? "Doğrulama e-postasını yeniden gönder" : "Resend verification email")}
+      <PremiumButton type="button" variant="secondary" disabled={busy || cooldown > 0} ariaBusy={busy} onClick={resend} className="mt-5 w-full">
+        {busy
+          ? (tr ? "Gönderiliyor…" : "Sending…")
+          : cooldown > 0
+            ? (tr ? `${cooldown} sn sonra yeniden gönder` : `Resend email in ${cooldown}s`)
+            : (tr ? "Doğrulama e-postasını yeniden gönder" : "Resend verification email")}
       </PremiumButton>
       <Link href="/login" className="mt-5 block text-center text-sm font-bold text-wine hover:underline">{tr ? "Giriş sayfasına dön" : "Back to sign in"}</Link>
     </div>

@@ -6,8 +6,9 @@
 import { createClient } from "@/lib/supabase/client";
 import { dispatchNotificationEvent } from "@/features/notifications/notification.events";
 import { runtimeAppUrl } from "@/config/brand";
+import { mapAuthError, type AuthErrorCode } from "./auth-errors";
 
-export type AuthResult = { ok: true; requiresEmailConfirmation?: boolean } | { ok: false; message: string; code?: "email_exists" };
+export type AuthResult = { ok: true; requiresEmailConfirmation?: boolean } | { ok: false; message: string; code?: AuthErrorCode };
 type OAuthProvider = "google" | "apple";
 
 const missingConfig = "Supabase environment variables are not configured.";
@@ -49,12 +50,7 @@ export const authService = {
         emailRedirectTo: input.redirectTo || runtimeAppUrl("/onboarding"),
       },
     });
-    if (error) {
-      const duplicate = error.message.toLowerCase().includes("already registered") || error.message.toLowerCase().includes("already exists");
-      return duplicate
-        ? { ok: false, code: "email_exists", message: "An account already exists with this email address." }
-        : { ok: false, message: error.message };
-    }
+    if (error) return { ok: false, ...mapAuthError(error, "verification") };
 
     // With email enumeration protection enabled, Supabase can return a
     // sanitized user with no identities instead of exposing an existing account.
@@ -72,14 +68,14 @@ export const authService = {
       email,
       options: { emailRedirectTo: redirectTo },
     });
-    return error ? { ok: false, message: error.message } : { ok: true };
+    return error ? { ok: false, ...mapAuthError(error, "verification") } : { ok: true };
   },
 
   async signIn(input: { email: string; password: string }): Promise<AuthResult> {
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const { error } = await client.auth.signInWithPassword(input);
-    return error ? { ok: false, message: error.message } : { ok: true };
+    return error ? { ok: false, ...mapAuthError(error) } : { ok: true };
   },
 
   async signInWithOAuth(provider: OAuthProvider, redirectTo: string): Promise<AuthResult> {
@@ -89,7 +85,7 @@ export const authService = {
       provider,
       options: { redirectTo },
     });
-    return error ? { ok: false, message: error.message } : { ok: true };
+    return error ? { ok: false, ...mapAuthError(error) } : { ok: true };
   },
 
   async getProfileNames(): Promise<{ ok: true; firstName: string; lastName: string } | { ok: false; message: string }> {
@@ -120,21 +116,21 @@ export const authService = {
     const { error } = await client.auth.resetPasswordForEmail(email, {
       redirectTo: runtimeAppUrl("/reset-password"),
     });
-    return error ? { ok: false, message: error.message } : { ok: true };
+    return error ? { ok: false, ...mapAuthError(error, "password_reset") } : { ok: true };
   },
 
   async updatePassword(password: string): Promise<AuthResult> {
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const { error } = await client.auth.updateUser({ password });
-    if(error)return{ok:false,message:error.message};void dispatchNotificationEvent({type:"password_changed",sourceEntityType:"security",confirmation:true});return{ok:true};
+    if(error)return{ok:false,...mapAuthError(error)};void dispatchNotificationEvent({type:"password_changed",sourceEntityType:"security",confirmation:true});return{ok:true};
   },
 
   async updateEmail(email: string): Promise<AuthResult> {
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const { error } = await client.auth.updateUser({ email });
-    return error ? { ok: false, message: error.message } : { ok: true };
+    return error ? { ok: false, ...mapAuthError(error, "verification") } : { ok: true };
   },
 
   async signOut() {

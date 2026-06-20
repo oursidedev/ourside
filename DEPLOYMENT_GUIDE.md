@@ -1,5 +1,9 @@
 # Production deployment guide
 
+## Authentication email prerequisite
+
+Before public beta, complete the manual Resend custom SMTP setup in [SUPABASE_RESEND_SMTP_GUIDE.md](SUPABASE_RESEND_SMTP_GUIDE.md). Supabase Auth SMTP is configured in Supabase Dashboard and cannot be verified safely from application code. Use [AUTH_EMAIL_DEBUG_GUIDE.md](AUTH_EMAIL_DEBUG_GUIDE.md) for delivery or rate-limit failures.
+
 ## Environment
 
 Configure Vercel Production variables from `.env.example`. Required public URLs are `NEXT_PUBLIC_MARKETING_URL=https://getourside.com`, `NEXT_PUBLIC_APP_URL=https://app.getourside.com`, `NEXT_PUBLIC_DOMAIN=getourside.com`, and `NEXT_PUBLIC_APP_DOMAIN=app.getourside.com`. Add Supabase URL/anon key normally. `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY` are server-only and must never use the `NEXT_PUBLIC_` prefix.
