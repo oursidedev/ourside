@@ -48,8 +48,8 @@ export function getAuthErrorMessage(
   const tr = locale === "tr";
   const messages: Record<Exclude<AuthErrorCode, "email_rate_limit">, [string, string]> = {
     invalid_credentials: ["The email address or password is incorrect.", "E-posta adresi veya şifre hatalı."],
-    email_not_confirmed: ["Please verify your email before signing in.", "Giriş yapmadan önce e-posta adresinizi doğrulayın."],
-    email_exists: ["An account already exists with this email address. Please sign in or reset your password.", "Bu e-posta adresiyle zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın."],
+    email_not_confirmed: ["Please verify your email before logging in.", "Giriş yapmadan önce e-posta adresinizi doğrulayın."],
+    email_exists: ["An account already exists with this email address. Please log in or reset your password.", "Bu e-posta adresiyle zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın."],
     weak_password: ["Use a password that meets all security requirements.", "Tüm güvenlik kurallarını karşılayan bir şifre kullanın."],
     recovery_expired: ["This password reset link is invalid or has expired. Request a new link.", "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş. Yeni bir bağlantı isteyin."],
     network_error: ["We could not reach Ourside. Check your connection and try again.", "Ourside'a ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin."],

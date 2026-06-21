@@ -31,9 +31,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
     authService.getOAuthAvailability().then(setOauth);
     const params = new URLSearchParams(location.search);
     if (params.get("error") === "oauth") {
-      setMessage(tr ? "Sosyal giriş tamamlanamadı. Lütfen tekrar deneyin." : "Social sign-in could not be completed. Please try again.");
+      setMessage(tr ? "Sosyal giriş tamamlanamadı. Lütfen tekrar deneyin." : "Social login could not be completed. Please try again.");
     } else if (params.get("password") === "changed") {
-      setMessage(tr ? "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapın." : "Your password was changed successfully. Sign in with your new password.");
+      setMessage(tr ? "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapın." : "Your password was changed successfully. Log in with your new password.");
     }
   }, [tr]);
 
@@ -43,7 +43,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const copy = {
     login: tr
       ? ["Hikâyenize yeniden hoş geldiniz.", "E-posta adresiniz ve şifrenizle güvenli şekilde giriş yapın."]
-      : ["Welcome back to your story.", "Sign in securely with your email address and password."],
+      : ["Welcome back to your story.", "Log in securely with your email address and password."],
     signup: tr
       ? ["İkiniz için bir yer açın.", "Güçlü bir şifreyle hesabınızı oluşturun, ardından e-posta adresinizi doğrulayın."]
       : ["Make a place for the two of you.", "Create your account with a strong password, then verify your email address."],
@@ -106,8 +106,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     if (busy) return;
     if (oauth && !oauth[provider]) {
       setMessage(provider === "google"
-        ? (tr ? "Google girişi henüz Supabase’te etkinleştirilmedi. Google OAuth Client ID ve Secret eklenmelidir." : "Google sign-in is not enabled in Supabase yet. A Google OAuth Client ID and Secret are required.")
-        : (tr ? "Apple girişi henüz Supabase’te etkinleştirilmedi. Apple Developer Service ID ve özel anahtar eklenmelidir." : "Apple sign-in is not enabled in Supabase yet. An Apple Developer Service ID and private key are required."));
+        ? (tr ? "Google girişi henüz Supabase’te etkinleştirilmedi. Google OAuth Client ID ve Secret eklenmelidir." : "Google login is not enabled in Supabase yet. A Google OAuth Client ID and Secret are required.")
+        : (tr ? "Apple girişi henüz Supabase’te etkinleştirilmedi. Apple Developer Service ID ve özel anahtar eklenmelidir." : "Apple login is not enabled in Supabase yet. An Apple Developer Service ID and private key are required."));
       return;
     }
     setBusy(true);
@@ -175,14 +175,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
         )}
         {message && <div role="status" className="rounded-xl border border-wine/15 bg-wine/5 p-3 text-sm text-wine">{message}</div>}
         <PremiumButton type="submit" disabled={busy} ariaBusy={busy} className="h-14 w-full">
-          {busy ? (tr ? "Lütfen bekleyin…" : "Please wait…") : mode === "login" ? (tr ? "Giriş yap" : "Sign in") : mode === "signup" ? (tr ? "Hesabımı oluştur" : "Create my account") : (tr ? "Sıfırlama bağlantısı gönder" : "Send reset link")}
+          {busy ? (tr ? "Lütfen bekleyin…" : "Please wait…") : mode === "login" ? (tr ? "Giriş yap" : "Log in") : mode === "signup" ? (tr ? "Hesabımı oluştur" : "Create my account") : (tr ? "Sıfırlama bağlantısı gönder" : "Send reset link")}
         </PremiumButton>
       </form>
 
       <p className="mt-8 text-center text-sm text-ink/55">
         {mode === "login" ? <>{tr ? "Burada yeni misiniz? " : "New here? "}<Link href={`/signup${preservedQuery}`} className="font-bold text-wine">{requestedNext ? (tr ? "Hesap oluşturun" : "Create an account") : (tr ? "Ourside’ınızı oluşturun" : "Create your Ourside")}</Link></>
-          : mode === "signup" ? <>{tr ? "Zaten bir hesabınız var mı? " : "Already have an account? "}<Link href={`/login${preservedQuery}`} className="font-bold text-wine">{tr ? "Giriş yapın" : "Sign in"}</Link></>
-            : <Link href="/login" className="font-bold text-wine">{tr ? "← Girişe dön" : "← Back to sign in"}</Link>}
+          : mode === "signup" ? <>{tr ? "Zaten bir hesabınız var mı? " : "Have an account? "}<Link href={`/login${preservedQuery}`} className="font-bold text-wine">{tr ? "Giriş yapın" : "Log in"}</Link></>
+            : <Link href="/login" className="font-bold text-wine">{tr ? "← Girişe dön" : "← Back to login"}</Link>}
       </p>
     </>
   );
@@ -246,7 +246,7 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
             ? (tr ? `${cooldown} sn sonra yeniden gönder` : `Resend email in ${cooldown}s`)
             : (tr ? "Doğrulama e-postasını yeniden gönder" : "Resend verification email")}
       </PremiumButton>
-      <Link href="/login" className="mt-5 block text-center text-sm font-bold text-wine hover:underline">{tr ? "Giriş sayfasına dön" : "Back to sign in"}</Link>
+      <Link href="/login" className="mt-5 block text-center text-sm font-bold text-wine hover:underline">{tr ? "Giriş sayfasına dön" : "Back to login"}</Link>
     </div>
   );
 }

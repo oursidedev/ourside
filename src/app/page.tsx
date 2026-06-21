@@ -79,7 +79,7 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <LanguageSwitcher compact />
             <Link href={appUrl("/login")} className="hidden text-sm font-bold sm:block">
-              <Bilingual en="Sign in" tr="Giriş yap" />
+              <Bilingual en="Log in" tr="Giriş yap" />
             </Link>
             <PremiumButton href={appUrl("/signup")} className="hidden sm:inline-flex">
               <Bilingual en="Create your Ourside" tr="Ourside'ınızı oluşturun" />

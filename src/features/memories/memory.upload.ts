@@ -10,7 +10,7 @@ export interface CreateMemoryUploadInput { title: string; description: string; m
 
 export async function createMemoryWithMedia(input: CreateMemoryUploadInput) {
   const client = createClient(); if (!client) throw new Error("Supabase is not configured.");
-  const { data: auth, error: authError } = await client.auth.getUser(); if (authError || !auth.user) throw new Error("Please sign in again.");
+  const { data: auth, error: authError } = await client.auth.getUser(); if (authError || !auth.user) throw new Error("Please log in again.");
   const { data: membership, error: membershipError } = await client.from("couple_members").select("couple_id").eq("user_id", auth.user.id).eq("status", "active").maybeSingle();
   if (membershipError || !membership) throw new Error(membershipError?.message || "Create or join an Ourside first.");
   const { data: memory, error: memoryError } = await client.from("memories").insert({ couple_id: membership.couple_id, author_id: auth.user.id, title: input.title.trim(), note: input.description.trim(), description: input.description.trim(), memory_date: input.memoryDate, type: input.images.length ? "photo" : "note", location: input.location.trim() || null, location_name: input.location.trim() || null, mood: input.mood.trim() || null, visibility: "couple" }).select("id").single();
