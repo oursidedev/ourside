@@ -7,7 +7,7 @@ export function renderPlanChangeEmail(input: { displayName?: string | null; from
   const name = escapeHtml(input.displayName?.trim() || "there");
   const plan = escapeHtml(input.toPlanName);
   const settingsUrl = appUrl("/settings");
-  const supportUrl = marketingUrl("/support");
+  const supportUrl = marketingUrl("/contact");
   return {
     subject: `Your Ourside plan is now ${input.toPlanName}`,
     text: `Hi ${input.displayName?.trim() || "there"},\n\nYour Ourside plan changed from ${input.fromPlan} to ${input.toPlanName}. Your access has been updated immediately.\n\nView your account: ${settingsUrl}\nIf you did not expect this change, contact us: ${supportUrl}`,
