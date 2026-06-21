@@ -29,8 +29,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   useEffect(() => {
     authService.getOAuthAvailability().then(setOauth);
-    if (new URLSearchParams(location.search).get("error") === "oauth") {
+    const params = new URLSearchParams(location.search);
+    if (params.get("error") === "oauth") {
       setMessage(tr ? "Sosyal giriş tamamlanamadı. Lütfen tekrar deneyin." : "Social sign-in could not be completed. Please try again.");
+    } else if (params.get("password") === "changed") {
+      setMessage(tr ? "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapın." : "Your password was changed successfully. Sign in with your new password.");
     }
   }, [tr]);
 

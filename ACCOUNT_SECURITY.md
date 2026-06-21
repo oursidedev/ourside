@@ -1,5 +1,7 @@
 # Account security
 
+Password recovery links use Supabase Auth's email OTP expiry and remain valid for 30 minutes (`1800` seconds). Supabase applies this shared expiry to authentication email links; changing it is a server configuration change, not a frontend timer. After a successful recovery, Ourside globally signs out existing sessions and requires login with the new password.
+
 Password changes require current password, new password and confirmation. The client validates length, mismatch, reuse and common weak values, then re-authenticates the user with Supabase Auth before calling `updateUser`. Passwords are never written to application tables, metadata, notifications or logs.
 
 After success, `record_my_password_change()` writes a non-sensitive audit event and creates an in-app security notification: “If this wasn’t you, secure your account immediately.” Email delivery remains ready through the existing notification provider architecture and activates only when a real provider is configured.

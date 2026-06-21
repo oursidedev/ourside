@@ -123,7 +123,12 @@ export const authService = {
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const { error } = await client.auth.updateUser({ password });
-    if(error)return{ok:false,...mapAuthError(error)};void dispatchNotificationEvent({type:"password_changed",sourceEntityType:"security",confirmation:true});return{ok:true};
+    if(error)return{ok:false,...mapAuthError(error,"password_reset")};
+    await dispatchNotificationEvent({type:"password_changed",sourceEntityType:"security",confirmation:true});
+    // A recovery should revoke existing refresh tokens so a stolen session
+    // cannot remain active after the account owner changes the password.
+    await client.auth.signOut({scope:"global"});
+    return{ok:true};
   },
 
   async updateEmail(email: string): Promise<AuthResult> {

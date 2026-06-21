@@ -11,6 +11,7 @@ export type AuthErrorCode =
   | "email_not_confirmed"
   | "email_exists"
   | "weak_password"
+  | "recovery_expired"
   | "network_error"
   | "unexpected";
 
@@ -34,6 +35,7 @@ export function getAuthErrorCode(error: unknown): AuthErrorCode {
   if (/email not confirmed/.test(value)) return "email_not_confirmed";
   if (/already registered|already exists|user already registered/.test(value)) return "email_exists";
   if (/password should be at least|weak password/.test(value)) return "weak_password";
+  if (/otp_expired|flow_state.*expired|token.*expired|invalid.*token|auth session missing/.test(value)) return "recovery_expired";
   if (/network|fetch failed|failed to fetch|load failed/.test(value)) return "network_error";
   return "unexpected";
 }
@@ -49,6 +51,7 @@ export function getAuthErrorMessage(
     email_not_confirmed: ["Please verify your email before signing in.", "Giriş yapmadan önce e-posta adresinizi doğrulayın."],
     email_exists: ["An account already exists with this email address. Please sign in or reset your password.", "Bu e-posta adresiyle zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın."],
     weak_password: ["Use a password that meets all security requirements.", "Tüm güvenlik kurallarını karşılayan bir şifre kullanın."],
+    recovery_expired: ["This password reset link is invalid or has expired. Request a new link.", "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş. Yeni bir bağlantı isteyin."],
     network_error: ["We could not reach Ourside. Check your connection and try again.", "Ourside'a ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin."],
     unexpected: ["We could not complete this request. Please try again.", "Bu işlem tamamlanamadı. Lütfen tekrar deneyin."],
   };

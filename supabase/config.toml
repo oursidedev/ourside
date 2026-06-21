@@ -31,7 +31,9 @@ double_confirm_changes = true
 enable_confirmations = true
 max_frequency = "10s"
 otp_length = 6
-otp_expiry = 600
+# Supabase uses one expiry for email OTP links, including password recovery.
+# Thirty minutes limits exposure while leaving enough time for email delivery.
+otp_expiry = 1800
 
 [auth.rate_limit]
 email_sent = 30
