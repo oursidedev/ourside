@@ -43,8 +43,8 @@ export function UserAdminActions({ userId, currentPlanSlug, customerEmail }: Pro
     if (!plan || selected === currentPlanSlug) return;
     const accepted = await confirm({
       title: `Change plan to ${plan.name}?`,
-      description: `Access will change immediately for ${customerEmail}. A plan-change email will also be sent to the customer.`,
-      confirmLabel: "Change plan and send email",
+      description: `Access will change immediately for the shared Ourside containing ${customerEmail}. Both active partners will receive an in-app notification and email.`,
+      confirmLabel: "Change plan and notify both",
       cancelLabel: "Cancel",
       tone: plan.isFree ? "destructive" : "default",
     });
@@ -59,8 +59,8 @@ export function UserAdminActions({ userId, currentPlanSlug, customerEmail }: Pro
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Plan could not be changed");
-      if (data.email?.sent) toast(`Plan changed to ${plan.name}. Customer email sent.`, "success");
-      else toast(`Plan changed to ${plan.name}, but email delivery failed: ${data.email?.error || "email provider is not configured"}`, "warning");
+      if (data.email?.sent) toast(`Plan changed to ${plan.name}. Emails sent to ${data.email.recipientCount} member${data.email.recipientCount === 1 ? "" : "s"}.`, "success");
+      else toast(`Plan changed to ${plan.name}. ${data.email?.sentCount || 0}/${data.email?.recipientCount || 0} emails sent: ${data.email?.error || "email provider is not configured"}`, "warning");
       setOpen(false);
       router.refresh();
     } catch (error) {
