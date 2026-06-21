@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import { MemoryCard } from "@/components/MemoryCard";
 import { FutureLetterCard } from "@/components/FutureLetterCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { memories } from "@/data/mock";
 import { Bilingual } from "@/components/Bilingual";
 import { useCoupleAccess } from "@/features/couples/CoupleAccessProvider";
 import { useLocale } from "@/i18n/LocaleProvider";
@@ -14,8 +13,9 @@ import { useToast } from "@/components/ui/ToastProvider";
 import { liveMemoryService } from "@/features/memories/memory.supabase";
 import { liveLetterService } from "@/features/letters/letter.supabase";
 import { liveBucketListService } from "@/features/bucket-list/bucket-list.supabase";
+import { liveMilestoneService } from "@/features/milestones/milestone.supabase";
 import { subscribeToTable } from "@/lib/supabase/realtime";
-import type { BucketListItem, Letter, Memory } from "@/types/database";
+import type { BucketListItem, Letter, Memory, Milestone } from "@/types/database";
 import { DashboardSkeleton } from "@/components/shared/loading/Skeletons";
 export default function Dashboard() {
   const { state, loading } = useCoupleAccess();
@@ -27,8 +27,9 @@ export default function Dashboard() {
   const [recentMemories,setRecentMemories]=useState<Memory[]>([]);
   const [sharedLetters,setSharedLetters]=useState<Letter[]>([]);
   const [sharedPlans,setSharedPlans]=useState<BucketListItem[]>([]);
-  const loadShared=useCallback(async()=>{if(!state?.ok||!state.complete)return;const results=await Promise.allSettled([liveMemoryService.list(),liveLetterService.list(),liveBucketListService.list()]);if(results[0].status==="fulfilled")setRecentMemories(results[0].value);if(results[1].status==="fulfilled")setSharedLetters(results[1].value);if(results[2].status==="fulfilled")setSharedPlans(results[2].value);},[state]);
-  useEffect(()=>{void loadShared();const stops=[subscribeToTable("memories",()=>void loadShared()),subscribeToTable("letters",()=>void loadShared()),subscribeToTable("bucket_list_items",()=>void loadShared())];return()=>stops.forEach(stop=>stop());},[loadShared]);
+  const [sharedMilestones,setSharedMilestones]=useState<Milestone[]>([]);
+  const loadShared=useCallback(async()=>{if(!state?.ok||!state.complete)return;const results=await Promise.allSettled([liveMemoryService.list(),liveLetterService.list(),liveBucketListService.list(),liveMilestoneService.list()]);if(results[0].status==="fulfilled")setRecentMemories(results[0].value);if(results[1].status==="fulfilled")setSharedLetters(results[1].value);if(results[2].status==="fulfilled")setSharedPlans(results[2].value);if(results[3].status==="fulfilled")setSharedMilestones(results[3].value);},[state]);
+  useEffect(()=>{void loadShared();const stops=[subscribeToTable("memories",()=>void loadShared()),subscribeToTable("letters",()=>void loadShared()),subscribeToTable("bucket_list_items",()=>void loadShared()),subscribeToTable("milestones",()=>void loadShared())];return()=>stops.forEach(stop=>stop());},[loadShared]);
 
   if (loading) return <DashboardSkeleton />;
   if (!state?.ok) return <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">{state?.message || "Unable to load your Ourside."}</div>;
@@ -36,6 +37,12 @@ export default function Dashboard() {
 
   const coupleNames = state.memberNames.join(" & ");
   const daysTogether = state.startDate ? Math.max(0, Math.floor((Date.now() - new Date(state.startDate).getTime()) / 86400000)) : 0;
+  const now = new Date();
+  const thisMonthCount = recentMemories.filter((memory) => { const date = new Date(memory.date); return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear(); }).length;
+  const onThisDay = recentMemories.find((memory) => { const date = new Date(memory.date); return date.getMonth() === now.getMonth() && date.getDate() === now.getDate() && date.getFullYear() < now.getFullYear(); });
+  const nextMilestone = sharedMilestones.map((milestone) => ({ ...milestone, parsedDate: new Date(milestone.date) })).filter((milestone) => milestone.parsedDate >= now).sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())[0];
+  const completedPlans = sharedPlans.filter((plan) => plan.completed).length;
+  const planProgress = sharedPlans.length ? Math.round((completedPlans / sharedPlans.length) * 100) : 0;
   return (
     <div>
       <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-wine via-[#8e4d56] to-[#b88484] p-6 text-white shadow-warm sm:p-10">
@@ -63,24 +70,24 @@ export default function Dashboard() {
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
             <span className="text-xs text-white/55">{tr ? "Sıradaki dönüm noktası" : "Next milestone"}</span>
             <strong className="mt-1 block font-serif text-xl">
-              {tr ? "Birlikte 500 gün" : "500 days together"}
+              {nextMilestone ? nextMilestone.title : (tr ? "Henüz tarih eklenmedi" : "No date added yet")}
             </strong>
-            <span className="text-xs text-white/50">{tr ? "73 gün sonra" : "in 73 days"}</span>
+            <span className="text-xs text-white/50">{nextMilestone ? nextMilestone.parsedDate.toLocaleDateString(locale) : (tr ? "Bir dönüm noktası ekleyin" : "Add a milestone")}</span>
           </div>
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
             <span className="text-xs text-white/55">{tr ? "Yaklaşan" : "Coming up"}</span>
             <strong className="mt-1 block font-serif text-xl">
-              {tr ? "Sıradaki özel tarihiniz" : "Your next special date"}
+              {state.startDate ? (tr ? "İlişki başlangıcınız" : "Your relationship start") : (tr ? "Tarih bekleniyor" : "Waiting for a date")}
             </strong>
-            <span className="text-xs text-white/50">{tr ? "16 Ağustos" : "August 16"}</span>
+            <span className="text-xs text-white/50">{state.startDate ? new Date(state.startDate).toLocaleDateString(locale, { month: "long", day: "numeric" }) : "—"}</span>
           </div>
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur">
             <span className="text-xs text-white/55">{tr ? "Bu ay" : "This month"}</span>
             <strong className="mt-1 block font-serif text-xl">
-              {tr ? "12 anı kaydedildi" : "12 moments saved"}
+              {tr ? `${thisMonthCount} anı kaydedildi` : `${thisMonthCount} moments saved`}
             </strong>
             <span className="text-xs text-white/50">
-              {tr ? "Şimdiye kadarki en dolu ayınız" : "Your fullest month yet"}
+              {thisMonthCount ? (tr ? "Bu aya ait gerçek anılarınız" : "Your real memories from this month") : (tr ? "İlk anınızı ekleyin" : "Add your first memory")}
             </span>
           </div>
         </div>
@@ -101,27 +108,22 @@ export default function Dashboard() {
             <div
               className="relative min-h-56 bg-cover bg-center"
               style={{
-                backgroundImage: `linear-gradient(to top,rgba(0,0,0,.4),transparent),url(${memories[2].imageUrl})`,
+                backgroundImage: onThisDay?.imageUrl ? `linear-gradient(to top,rgba(0,0,0,.4),transparent),url(${onThisDay.imageUrl})` : "linear-gradient(135deg,#f5e9e5,#efe1e8)",
               }}
             >
               <span className="absolute bottom-4 left-4 rounded-full bg-white/85 px-3 py-1 text-xs font-bold text-wine">
-                {tr ? "Bugün, bir yıl önce" : "One year ago today"}
+                {onThisDay ? (tr ? "Bugün, önceki yıllarda" : "On this day") : (tr ? "Henüz anı yok" : "No memory yet")}
               </span>
             </div>
             <div className="p-7">
               <CalendarDays className="text-rose" />
               <h2 className="mt-5 font-serif text-3xl">
-                {tr ? "Birlikte ilk gün batımımız." : "Our first sunset together."}
+                {onThisDay?.title || (tr ? "Bugüne ait eski bir anınız yok." : "No memory from this day yet.")}
               </h2>
               <p className="mt-3 text-sm leading-6 text-ink/55">
-                {tr ? "Gökyüzünün bizi kutluyor gibi göründüğünü söyledin. Bunu not etmemiş gibi yaptım." : "You said the sky looked like it was celebrating us. I pretended not to write that down."}
+                {onThisDay?.note || (tr ? "Bugünün anısını eklediğinizde gelecek yıllarda burada görünecek." : "Add a memory today and it can appear here in future years.")}
               </p>
-              <Link
-                href="/memories/3"
-                className="mt-6 inline-block text-sm font-bold text-wine"
-              >
-                {tr ? "Bu anıyı aç →" : "Open this memory →"}
-              </Link>
+              {onThisDay && <Link href={`/memories/${onThisDay.id}`} className="mt-6 inline-block text-sm font-bold text-wine">{tr ? "Bu anıyı aç →" : "Open this memory →"}</Link>}
             </div>
           </div>
         </section>
@@ -157,6 +159,7 @@ export default function Dashboard() {
           {sharedLetters.slice(0, 2).map((l) => (
             <FutureLetterCard key={l.id} letter={l} />
           ))}
+          {!sharedLetters.length && <p className="col-span-full rounded-2xl border border-dashed bg-paper p-6 text-center text-sm text-ink/50">{tr ? "Henüz gelecek mektubu yok." : "No future letters yet."}</p>}
         </div>
       </section>
       <section className="mt-10 rounded-[1.5rem] border bg-paper p-6 shadow-card">
@@ -165,10 +168,10 @@ export default function Dashboard() {
             <p className="eyebrow">{tr ? "Birlikte kurulan gelecek" : "A future made together"}</p>
             <h2 className="mt-2 font-serif text-3xl"><Bilingual en="Shared plans" tr="Ortak planlar" /></h2>
           </div>
-          <span className="font-serif text-3xl text-wine">20%</span>
+          <span className="font-serif text-3xl text-wine">{planProgress}%</span>
         </div>
         <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-wine/10">
-          <div className="h-full w-1/5 rounded-full bg-wine" />
+          <div className="h-full rounded-full bg-wine transition-[width]" style={{ width: `${planProgress}%` }} />
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {sharedPlans.slice(0, 4).map((i) => (
@@ -186,6 +189,7 @@ export default function Dashboard() {
               </span>
             </div>
           ))}
+          {!sharedPlans.length && <p className="col-span-full rounded-xl border border-dashed p-5 text-center text-sm text-ink/50">{tr ? "Henüz ortak plan yok." : "No shared plans yet."}</p>}
         </div>
       </section>
     </div>

@@ -7,7 +7,7 @@ export interface MemoryMedia { id:ID; memoryId:ID; url:string; type:'image'|'vid
 export interface Album { id:ID; coupleId:ID; title:string; coverUrl:string; count:number }
 export interface Letter { id:ID; coupleId:ID; title:string; body?:string; unlockAt:string; author:string; locked:boolean }
 export interface Milestone { id:ID; coupleId:ID; title:string; date:string; icon:string; note?:string }
-export interface BucketListItem { id:ID; coupleId:ID; title:string; category:'Travel'|'Food'|'Experiences'|'Home'|'Dreams'|'Random'; completed:boolean; imageUrl?:string }
+export interface BucketListItem { id:ID; coupleId:ID; title:string; category:'Travel'|'Food'|'Experiences'|'Home'|'Dreams'|'Random'; completed:boolean; completedAt?:string; imageUrl?:string }
 export interface DailyQuestion { id:ID; prompt:string; date:string }
 export interface DailyAnswer { id:ID; questionId:ID; userId:ID; answer:string; revealed:boolean }
 export interface Notification { id:ID; userId:ID; title:string; read:boolean; createdAt:string }

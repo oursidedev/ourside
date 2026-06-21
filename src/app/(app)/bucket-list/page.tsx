@@ -123,8 +123,7 @@ export default function BucketList() {
                 </h2>
                 {item.completed && (
                   <p className="mt-10 flex items-center gap-1 text-xs font-bold">
-                    <Sparkles className="h-3.5 w-3.5" /> Lived on November 18,
-                    2025
+                    <Sparkles className="h-3.5 w-3.5" /> {item.completedAt ? `Lived on ${new Date(item.completedAt).toLocaleDateString()}` : "Completed together"}
                   </p>
                 )}
               </div>

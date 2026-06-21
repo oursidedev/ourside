@@ -17,7 +17,7 @@ import { FloatingHearts } from "@/components/FloatingHearts";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { PricingSection } from "@/components/PricingSection";
 import { Bilingual } from "@/components/Bilingual";
-import { images } from "@/data/mock";
+import { marketingImages as images } from "@/data/marketing-images";
 import { appUrl, marketingUrl } from "@/config/brand";
 const features = [
   [

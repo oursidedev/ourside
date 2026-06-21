@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowLeft, Check, Heart, ImagePlus, Mail, Palette, PartyPopper } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { images } from "@/data/mock";
+import { marketingImages as images } from "@/data/marketing-images";
 import { coupleService } from "@/features/couples/couple.service";
 
 const steps = [
