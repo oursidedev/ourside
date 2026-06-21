@@ -6,7 +6,6 @@ import {
   Camera,
   Heart,
   LockKeyhole,
-  Menu,
   Sparkles,
   Target,
   TimerReset,
@@ -19,6 +18,7 @@ import { PricingSection } from "@/components/PricingSection";
 import { Bilingual } from "@/components/Bilingual";
 import { marketingImages as images } from "@/data/marketing-images";
 import { appUrl, marketingUrl } from "@/config/brand";
+import { LandingHeader } from "@/components/marketing/LandingHeader";
 const features = [
   [
     Camera,
@@ -26,6 +26,7 @@ const features = [
     "Ortak Anılar",
     "Keep photos and the stories behind them, together.",
     "Fotoğrafları ve ardındaki hikâyeleri birlikte saklayın.",
+    "/memories",
   ],
   [
     Heart,
@@ -33,6 +34,7 @@ const features = [
     "Özel Galeri",
     "A camera roll that belongs only to the two of you.",
     "Yalnızca ikinize ait özel bir fotoğraf arşivi.",
+    "/gallery",
   ],
   [
     LockKeyhole,
@@ -40,6 +42,7 @@ const features = [
     "Gelecek Mektupları",
     "Seal words now and choose when they can be opened.",
     "Bugünün sözlerini mühürleyin, ne zaman açılacağını seçin.",
+    "/vault",
   ],
   [
     TimerReset,
@@ -47,6 +50,7 @@ const features = [
     "Zaman Çizelgemiz",
     "See the small days and turning points as one story.",
     "Küçük günleri ve dönüm noktalarını tek bir hikâye olarak görün.",
+    "/memories",
   ],
   [
     CalendarHeart,
@@ -54,6 +58,7 @@ const features = [
     "Önemli Tarihler",
     "Remember what matters without making it feel like a calendar.",
     "Değerli tarihleri sıradan bir takvim hissi olmadan hatırlayın.",
+    "/milestones",
   ],
   [
     Target,
@@ -61,6 +66,7 @@ const features = [
     "Ortak Hayaller",
     "Plan a future, then turn completed dreams into memories.",
     "Geleceği planlayın, gerçekleşen hayalleri anılara dönüştürün.",
+    "/bucket-list",
   ],
 ] as const;
 export default function Landing() {
@@ -68,25 +74,7 @@ export default function Landing() {
     <main className="overflow-hidden">
       <section className="relative min-h-[94vh] px-5">
         <FloatingHearts count={10} />
-        <nav className="mx-auto flex h-24 max-w-7xl items-center justify-between">
-          <Logo />
-          <div className="hidden items-center gap-8 text-sm font-semibold md:flex">
-            <a href="#features"><Bilingual en="Features" tr="Özellikler" /></a>
-            <a href="#story"><Bilingual en="Our story" tr="Hikâyemiz" /></a>
-            <a href="#vault"><Bilingual en="Future letters" tr="Gelecek mektupları" /></a>
-            <a href="#pricing"><Bilingual en="Pricing" tr="Fiyatlandırma" /></a>
-          </div>
-          <div className="flex items-center gap-3">
-            <LanguageSwitcher compact />
-            <Link href={appUrl("/login")} className="hidden text-sm font-bold sm:block">
-              <Bilingual en="Log in" tr="Giriş yap" />
-            </Link>
-            <PremiumButton href={appUrl("/signup")} className="hidden sm:inline-flex">
-              <Bilingual en="Create your Ourside" tr="Ourside'ınızı oluşturun" />
-            </PremiumButton>
-            <Menu className="sm:hidden" />
-          </div>
-        </nav>
+        <LandingHeader />
         <div className="mx-auto grid max-w-7xl items-center gap-14 pb-20 pt-12 lg:grid-cols-[.9fr_1.1fr] lg:pt-16">
           <div className="relative z-10">
             <p className="eyebrow mb-5"><Bilingual en="Our little world, kept forever." tr="Küçük dünyamız, sonsuza dek saklı." /></p>
@@ -101,7 +89,7 @@ export default function Landing() {
               <PremiumButton href={appUrl("/signup")} className="px-8">
                 <Bilingual en="Create Your Ourside" tr="Ourside'ınızı oluşturun" />
               </PremiumButton>
-              <PremiumButton href="#story" variant="secondary">
+              <PremiumButton href="#about" variant="secondary">
                 <Bilingual en="Explore the experience" tr="Deneyimi keşfedin" />
               </PremiumButton>
             </div>
@@ -122,22 +110,21 @@ export default function Landing() {
                 ))}
               </div>
               <p className="text-xs leading-5 text-ink/50">
-                <strong className="block text-ink">
-                  <Bilingual en="Loved by 12,000+ couples" tr="12.000'den fazla çiftin tercihi" />
-                </strong>
-                and every story is still private.
+                <strong className="block text-ink"><Bilingual en="Private by design" tr="Gizlilik için tasarlandı" /></strong>
+                <Bilingual en="Every shared story stays between two." tr="Paylaşılan her hikâye iki kişi arasında kalır." />
               </p>
             </div>
           </div>
-          <div className="relative mx-auto h-[540px] w-full max-w-[670px]">
+          <div className="relative mx-auto h-[470px] w-full max-w-[670px] sm:h-[540px]">
             <div className="absolute inset-10 rounded-full bg-gradient-to-br from-[#f2cfc8] via-[#eee3dc] to-[#dbd1e8] blur-3xl" />
             <div className="absolute left-[5%] top-10 z-10 w-[45%] -rotate-6 rounded-md bg-paper p-3 pb-12 shadow-warm">
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image
-                  src={images[0]}
+                  src={images[2]}
                   alt="A couple walking by the sea"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 639px) 42vw, 300px"
                   priority
                 />
               </div>
@@ -152,6 +139,7 @@ export default function Landing() {
                   alt="A quiet moment together"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 639px) 46vw, 330px"
                   priority
                 />
               </div>
@@ -179,6 +167,22 @@ export default function Landing() {
         </p>
         <p className="mt-3 text-white/60"><Bilingual en="A place to remember what mattered." tr="Değerli olanı hatırlayacağınız bir yer." /></p>
       </section>
+      <section id="about" className="px-5 py-24 sm:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-end">
+            <div><p className="eyebrow"><Bilingual en="What is Ourside?" tr="Ourside nedir?" /></p><h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight sm:text-6xl"><Bilingual en="A private world for " tr="Yalnızca " /><span className="italic text-wine"><Bilingual en="the two of you." tr="ikinize ait özel bir dünya." /></span></h2></div>
+            <p className="max-w-2xl text-base leading-8 text-ink/60 sm:text-lg"><Bilingual en="Ourside brings your photos, notes, future letters, milestones, and shared plans into one quiet place. It is not a social feed. It is a personal timeline that only you and your partner can build and revisit." tr="Ourside; fotoğraflarınızı, notlarınızı, gelecek mektuplarınızı, dönüm noktalarınızı ve ortak planlarınızı sakin bir alanda birleştirir. Bir sosyal akış değil; yalnızca sizin ve partnerinizin oluşturup yeniden yaşayabildiği kişisel bir zaman çizelgesidir." /></p>
+          </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              [LockKeyhole, "Private by design", "Gizlilik için tasarlandı", "Only the two of you can enter.", "Yalnızca ikiniz erişebilirsiniz."],
+              [Camera, "Keep moments together", "Anları birlikte saklayın", "Photos and the stories behind them stay connected.", "Fotoğraflar ve hikâyeleri bir arada kalır."],
+              [TimerReset, "Write across time", "Zamana mektup bırakın", "Seal a letter for a date that matters.", "Önemli bir tarih için mektup mühürleyin."],
+              [Target, "Shape what comes next", "Geleceği birlikte kurun", "Turn shared plans into memories when they happen.", "Ortak planları gerçekleştiğinde anıya dönüştürün."],
+            ].map(([Icon, title, titleTr, text, textTr]) => <article key={title as string} className="rounded-[1.5rem] border bg-paper p-6 shadow-card"><span className="grid h-11 w-11 place-items-center rounded-full bg-wine/10 text-wine"><Icon className="h-5 w-5" /></span><h3 className="mt-6 font-serif text-2xl"><Bilingual en={title as string} tr={titleTr as string} /></h3><p className="mt-2 text-sm leading-6 text-ink/55"><Bilingual en={text as string} tr={textTr as string} /></p></article>)}
+          </div>
+        </div>
+      </section>
       <section id="features" className="mx-auto max-w-7xl px-5 py-28">
         <div className="max-w-2xl">
           <p className="eyebrow"><Bilingual en="Made for the two of you" tr="İkiniz için tasarlandı" /></p>
@@ -188,7 +192,7 @@ export default function Landing() {
           </h2>
         </div>
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map(([Icon, title, titleTr, text, textTr]) => (
+          {features.map(([Icon, title, titleTr, text, textTr, href]) => (
             <article
               key={title}
               className="group relative overflow-hidden rounded-[1.6rem] border bg-paper p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-warm"
@@ -199,9 +203,9 @@ export default function Landing() {
               </div>
               <h3 className="mt-8 font-serif text-2xl"><Bilingual en={title} tr={titleTr} /></h3>
               <p className="mt-2 text-sm leading-6 text-ink/55"><Bilingual en={text} tr={textTr} /></p>
-              <span className="mt-6 inline-flex items-center gap-1 text-xs font-bold text-wine">
+              <Link href={appUrl(href)} className="focus-ring mt-6 inline-flex items-center gap-1 rounded-md text-xs font-bold text-wine">
                 <Bilingual en="Discover" tr="Keşfet" /> <ArrowRight className="h-3.5 w-3.5" />
-              </span>
+              </Link>
             </article>
           ))}
         </div>
@@ -217,26 +221,24 @@ export default function Landing() {
           </div>
           <div className="relative mx-auto mt-16 max-w-4xl space-y-5">
             {[
-              ["Apr 2025", "Our first coffee", "left top"],
-              ["Nov 2025", "The trip we still talk about", "left bottom"],
-              ["Feb 2026", "The day we moved in", "right bottom"],
-              ["Oct 2027", "A letter for our future selves", "right top"],
+              ["Apr 2025", "The coffee shop we kept going back to", "Her hafta döndüğümüz küçük kahveci", "A small ritual that quietly became ours.", "Sessizce bize ait olan küçük bir alışkanlık.", images[1]],
+              ["Nov 2025", "Our first weekend trip", "İlk hafta sonu yolculuğumuz", "No itinerary, one shared playlist, and the wrong train.", "Plansız bir rota, ortak bir çalma listesi ve yanlış tren.", images[3]],
+              ["Feb 2026", "The day we moved in", "Birlikte eve çıktığımız gün", "Keys on the table and boxes in every room.", "Masada anahtarlar, her odada kutular.", images[4]],
+              ["Oct 2027", "A letter for our next anniversary", "Gelecek yıldönümümüze bir mektup", "Sealed today. Waiting for another chapter.", "Bugün mühürlendi. Yeni bir bölümü bekliyor.", images[5]],
             ].map((m) => (
               <div
                 key={m[1]}
                 className="group grid overflow-hidden rounded-[1.5rem] border bg-paper shadow-card md:grid-cols-[260px_1fr]"
               >
-                <div
-                  role="img"
-                  aria-label={`Editorial memory: ${m[1]}`}
-                  className="min-h-52 bg-cover transition duration-700 group-hover:scale-[1.025] md:min-h-full"
-                  style={{ backgroundImage: "url('/images/ourside-milestones.png')", backgroundSize: "200% 200%", backgroundPosition: m[2] }}
-                />
+                <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-60">
+                  {/* Ratio-based photo containers prevent distortion at mobile breakpoints. */}
+                  <Image src={m[5]} alt={`Editorial memory: ${m[1]}`} fill sizes="(max-width: 767px) 100vw, 260px" className="object-cover transition duration-700 group-hover:scale-[1.035] motion-reduce:transition-none" />
+                </div>
                 <div className="flex min-h-52 flex-col justify-center p-7 text-left md:p-9">
                   <span className="eyebrow">{m[0]}</span>
-                  <h3 className="mt-2 font-serif text-3xl">{m[1]}</h3>
+                  <h3 className="mt-2 font-serif text-3xl"><Bilingual en={m[1]} tr={m[2]} /></h3>
                   <p className="mt-3 font-serif text-lg italic text-ink/50">
-                    “I hope we never forget how this felt.”
+                    “<Bilingual en={m[3]} tr={m[4]} />”
                   </p>
                 </div>
               </div>
@@ -313,7 +315,6 @@ export default function Landing() {
           <a href="#features">Product</a>
           <Link href={marketingUrl("/privacy")}>Privacy</Link>
           <Link href={marketingUrl("/contact")}>Support</Link>
-          <a>Instagram</a>
           <Link href={marketingUrl("/terms")}>Terms</Link>
         </div>
         <div className="flex items-center gap-6">
