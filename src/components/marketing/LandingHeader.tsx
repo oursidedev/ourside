@@ -86,10 +86,25 @@ export function LandingHeader() {
             <Bilingual en="Log in" tr="Giriş yap" />
           </Link>
           <PremiumButton
-            href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"}
+            href={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? appUrl("/signup")
+                : appUrl("/demo")
+            }
             className="hidden md:inline-flex"
           >
-            <Bilingual en={PRODUCT_STATUS.publicSignupEnabled ? "Create your Ourside" : "View case study"} tr={PRODUCT_STATUS.publicSignupEnabled ? "Ourside'ınızı oluşturun" : "Vaka çalışmasını görün"} />
+            <Bilingual
+              en={
+                PRODUCT_STATUS.publicSignupEnabled
+                  ? "Create your Ourside"
+                  : "Open interactive demo"
+              }
+              tr={
+                PRODUCT_STATUS.publicSignupEnabled
+                  ? "Ourside'ınızı oluşturun"
+                  : "İnteraktif demoyu aç"
+              }
+            />
           </PremiumButton>
           <button
             type="button"
@@ -159,13 +174,25 @@ export function LandingHeader() {
               </div>
               <div className="mt-auto grid gap-3 pb-[max(0px,env(safe-area-inset-bottom))]">
                 <PremiumButton
-                  href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"}
+                  href={
+                    PRODUCT_STATUS.publicSignupEnabled
+                      ? appUrl("/signup")
+                      : appUrl("/demo")
+                  }
                   onClick={() => setOpen(false)}
                   className="w-full"
                 >
                   <Bilingual
-                    en={PRODUCT_STATUS.publicSignupEnabled ? "Create your Ourside" : "View case study"}
-                    tr={PRODUCT_STATUS.publicSignupEnabled ? "Ourside'ınızı oluşturun" : "Vaka çalışmasını görün"}
+                    en={
+                      PRODUCT_STATUS.publicSignupEnabled
+                        ? "Create your Ourside"
+                        : "Open interactive demo"
+                    }
+                    tr={
+                      PRODUCT_STATUS.publicSignupEnabled
+                        ? "Ourside'ınızı oluşturun"
+                        : "İnteraktif demoyu aç"
+                    }
                   />
                 </PremiumButton>
                 <PremiumButton

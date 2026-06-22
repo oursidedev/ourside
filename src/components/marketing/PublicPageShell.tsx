@@ -22,10 +22,16 @@ export function PublicPageShell({
             Log in
           </Link>
           <Link
-            href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : marketingUrl("/#case-study")}
+            href={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? appUrl("/signup")
+                : appUrl("/demo")
+            }
             className="rounded-full bg-wine px-5 py-3 font-bold text-white"
           >
-            {PRODUCT_STATUS.publicSignupEnabled ? "Create your Ourside" : "View case study"}
+            {PRODUCT_STATUS.publicSignupEnabled
+              ? "Create your Ourside"
+              : "Open demo"}
           </Link>
         </div>
       </nav>

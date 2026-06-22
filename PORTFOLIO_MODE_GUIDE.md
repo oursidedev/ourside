@@ -11,13 +11,14 @@ Ourside is retained as a portfolio case study rather than an open public product
 - New couple-space creation is blocked at the application service boundary.
 - Anonymous invite-code users are directed to login, not signup.
 - Existing email/password users and administrators can still log in.
+- `/demo` is public, fictional, non-persistent, and isolated from Supabase data.
 
 ## Environment controls
 
 ```env
 NEXT_PUBLIC_PRODUCT_MODE=portfolio
 NEXT_PUBLIC_PUBLIC_SIGNUP_ENABLED=false
-NEXT_PUBLIC_DEMO_ACCESS_ENABLED=false
+NEXT_PUBLIC_DEMO_ACCESS_ENABLED=true
 ```
 
 These values are centralized in `src/config/product-status.ts`. They are public UX/config values, not authorization secrets.

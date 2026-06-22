@@ -8,10 +8,8 @@
  */
 export const PRODUCT_STATUS = {
   mode: process.env.NEXT_PUBLIC_PRODUCT_MODE || "portfolio",
-  publicSignupEnabled:
-    process.env.NEXT_PUBLIC_PUBLIC_SIGNUP_ENABLED === "true",
-  demoAccessEnabled:
-    process.env.NEXT_PUBLIC_DEMO_ACCESS_ENABLED === "true",
+  publicSignupEnabled: process.env.NEXT_PUBLIC_PUBLIC_SIGNUP_ENABLED === "true",
+  demoAccessEnabled: process.env.NEXT_PUBLIC_DEMO_ACCESS_ENABLED !== "false",
 } as const;
 
 export const isPortfolioMode = PRODUCT_STATUS.mode === "portfolio";

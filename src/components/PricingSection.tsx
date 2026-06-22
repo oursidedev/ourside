@@ -39,7 +39,7 @@ export function PricingSection() {
   }, []);
   function purchase(plan: DynamicPlan) {
     if (!PRODUCT_STATUS.publicSignupEnabled) {
-      window.location.assign("/#case-study");
+      window.location.assign(runtimeAppUrl("/demo"));
       return;
     }
     if (plan.isFree) {
@@ -261,7 +261,11 @@ function PriceCard({
         variant={plan.isFeatured ? "secondary" : "primary"}
         className={`mt-auto w-full ${plan.isFeatured ? "border-white/20 bg-white text-wine hover:bg-[#fff7f4]" : ""}`}
       >
-        {busy ? "Loading…" : PRODUCT_STATUS.publicSignupEnabled ? plan.ctaText || "Choose plan" : "View case study"}
+        {busy
+          ? "Loading…"
+          : PRODUCT_STATUS.publicSignupEnabled
+            ? plan.ctaText || "Choose plan"
+            : "Open product demo"}
       </PremiumButton>
     </article>
   );

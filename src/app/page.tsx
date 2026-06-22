@@ -81,12 +81,19 @@ export default function Landing() {
           <div className="relative z-10">
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <p className="eyebrow">
-              <Bilingual
-                en="Our little world, kept forever."
-                tr="Küçük dünyamız, sonsuza dek saklı."
-              />
+                <Bilingual
+                  en="Our little world, kept forever."
+                  tr="Küçük dünyamız, sonsuza dek saklı."
+                />
               </p>
-              {!PRODUCT_STATUS.publicSignupEnabled && <span className="rounded-full border border-wine/15 bg-wine/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-wine"><Bilingual en="Portfolio case study" tr="Portfolyo vaka çalışması" /></span>}
+              {!PRODUCT_STATUS.publicSignupEnabled && (
+                <span className="rounded-full border border-wine/15 bg-wine/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-wine">
+                  <Bilingual
+                    en="Portfolio case study"
+                    tr="Portfolyo vaka çalışması"
+                  />
+                </span>
+              )}
             </div>
             <h1 className="max-w-2xl font-serif text-[clamp(3.4rem,7vw,6.8rem)] font-medium leading-[.92] tracking-[-.055em]">
               <Bilingual
@@ -104,10 +111,25 @@ export default function Landing() {
               />
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <PremiumButton href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"} className="px-8">
+              <PremiumButton
+                href={
+                  PRODUCT_STATUS.publicSignupEnabled
+                    ? appUrl("/signup")
+                    : appUrl("/demo")
+                }
+                className="px-8"
+              >
                 <Bilingual
-                  en={PRODUCT_STATUS.publicSignupEnabled ? "Create Your Ourside" : "View case study"}
-                  tr={PRODUCT_STATUS.publicSignupEnabled ? "Ourside'ınızı oluşturun" : "Vaka çalışmasını görün"}
+                  en={
+                    PRODUCT_STATUS.publicSignupEnabled
+                      ? "Create Your Ourside"
+                      : "Open interactive demo"
+                  }
+                  tr={
+                    PRODUCT_STATUS.publicSignupEnabled
+                      ? "Ourside'ınızı oluşturun"
+                      : "İnteraktif demoyu aç"
+                  }
                 />
               </PremiumButton>
               <PremiumButton href="#about" variant="secondary">
@@ -460,8 +482,16 @@ export default function Landing() {
         <Sparkles className="mx-auto mb-6 text-rose" />
         <h2 className="font-serif text-4xl sm:text-6xl">
           <Bilingual
-            en={PRODUCT_STATUS.publicSignupEnabled ? "Start saving your story together." : "A complete product concept, preserved as a case study."}
-            tr={PRODUCT_STATUS.publicSignupEnabled ? "Hikâyenizi birlikte saklamaya başlayın." : "Vaka çalışması olarak korunan eksiksiz bir ürün konsepti."}
+            en={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? "Start saving your story together."
+                : "A complete product concept, preserved as a case study."
+            }
+            tr={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? "Hikâyenizi birlikte saklamaya başlayın."
+                : "Vaka çalışması olarak korunan eksiksiz bir ürün konsepti."
+            }
           />
         </h2>
         <p className="mt-4 text-white/55">
@@ -471,10 +501,25 @@ export default function Landing() {
           />
         </p>
         <PremiumButton
-          href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"}
+          href={
+            PRODUCT_STATUS.publicSignupEnabled
+              ? appUrl("/signup")
+              : appUrl("/demo")
+          }
           className="mt-8 bg-[#f4ded8] text-wine hover:bg-white"
         >
-          <Bilingual en={PRODUCT_STATUS.publicSignupEnabled ? "Create Our Space" : "Explore the case study"} tr={PRODUCT_STATUS.publicSignupEnabled ? "Alanımızı oluştur" : "Vaka çalışmasını incele"} />
+          <Bilingual
+            en={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? "Create Our Space"
+                : "Open the interactive demo"
+            }
+            tr={
+              PRODUCT_STATUS.publicSignupEnabled
+                ? "Alanımızı oluştur"
+                : "İnteraktif demoyu aç"
+            }
+          />
         </PremiumButton>
       </section>
       <footer className="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-12 text-sm text-ink/55 md:flex-row md:items-center md:justify-between">

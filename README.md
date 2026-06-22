@@ -7,6 +7,7 @@ Ourside is a full-stack portfolio case study for a private digital memory space 
 Ourside is preserved in **portfolio mode**. The marketing site remains public, while public registration and new shared-space creation are disabled. Existing authorized users and the owner can still log in.
 
 - Marketing: <https://getourside.com>
+- Public non-persistent demo: <https://app.getourside.com/demo>
 - Authorized app access: <https://app.getourside.com/login>
 - Stack: Next.js, React, TypeScript, Tailwind CSS, Supabase, Vercel
 
@@ -19,7 +20,7 @@ npm install
 npm run dev
 ```
 
-Product availability is centralized in `src/config/product-status.ts`. See `PORTFOLIO_MODE_GUIDE.md` before changing it.
+Product availability is centralized in `src/config/product-status.ts`. See `PORTFOLIO_MODE_GUIDE.md` and `DEMO_MODE_GUIDE.md` before changing it.
 
 ## Privacy
 
