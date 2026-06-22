@@ -19,6 +19,8 @@ import { Bilingual } from "@/components/Bilingual";
 import { marketingImages as images } from "@/data/marketing-images";
 import { appUrl, marketingUrl } from "@/config/brand";
 import { LandingHeader } from "@/components/marketing/LandingHeader";
+import { PRODUCT_STATUS } from "@/config/product-status";
+import { PortfolioCaseStudy } from "@/components/marketing/PortfolioCaseStudy";
 const features = [
   [
     Camera,
@@ -77,17 +79,36 @@ export default function Landing() {
         <LandingHeader />
         <div className="mx-auto grid max-w-7xl items-center gap-14 pb-20 pt-12 lg:grid-cols-[.9fr_1.1fr] lg:pt-16">
           <div className="relative z-10">
-            <p className="eyebrow mb-5"><Bilingual en="Our little world, kept forever." tr="Küçük dünyamız, sonsuza dek saklı." /></p>
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <p className="eyebrow">
+              <Bilingual
+                en="Our little world, kept forever."
+                tr="Küçük dünyamız, sonsuza dek saklı."
+              />
+              </p>
+              {!PRODUCT_STATUS.publicSignupEnabled && <span className="rounded-full border border-wine/15 bg-wine/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-wine"><Bilingual en="Portfolio case study" tr="Portfolyo vaka çalışması" /></span>}
+            </div>
             <h1 className="max-w-2xl font-serif text-[clamp(3.4rem,7vw,6.8rem)] font-medium leading-[.92] tracking-[-.055em]">
-              <Bilingual en="Your story deserves a place " tr="Hikâyeniz kendine ait " />
-              <span className="italic text-wine"><Bilingual en="of its own." tr="bir yeri hak ediyor." /></span>
+              <Bilingual
+                en="Your story deserves a place "
+                tr="Hikâyeniz kendine ait "
+              />
+              <span className="italic text-wine">
+                <Bilingual en="of its own." tr="bir yeri hak ediyor." />
+              </span>
             </h1>
             <p className="mt-7 max-w-xl text-base leading-8 text-ink/62 sm:text-lg">
-              <Bilingual en="Ourside is a private space for couples to keep photos, letters, milestones, and every little moment that becomes part of their story." tr="Ourside; çiftlerin fotoğraflarını, mektuplarını, dönüm noktalarını ve hikâyelerinin parçası olan tüm küçük anları saklayabildiği özel bir alandır." />
+              <Bilingual
+                en="Ourside is a private space for couples to keep photos, letters, milestones, and every little moment that becomes part of their story."
+                tr="Ourside; çiftlerin fotoğraflarını, mektuplarını, dönüm noktalarını ve hikâyelerinin parçası olan tüm küçük anları saklayabildiği özel bir alandır."
+              />
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <PremiumButton href={appUrl("/signup")} className="px-8">
-                <Bilingual en="Create Your Ourside" tr="Ourside'ınızı oluşturun" />
+              <PremiumButton href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"} className="px-8">
+                <Bilingual
+                  en={PRODUCT_STATUS.publicSignupEnabled ? "Create Your Ourside" : "View case study"}
+                  tr={PRODUCT_STATUS.publicSignupEnabled ? "Ourside'ınızı oluşturun" : "Vaka çalışmasını görün"}
+                />
               </PremiumButton>
               <PremiumButton href="#about" variant="secondary">
                 <Bilingual en="Explore the experience" tr="Deneyimi keşfedin" />
@@ -110,8 +131,16 @@ export default function Landing() {
                 ))}
               </div>
               <p className="text-xs leading-5 text-ink/50">
-                <strong className="block text-ink"><Bilingual en="Private by design" tr="Gizlilik için tasarlandı" /></strong>
-                <Bilingual en="Every shared story stays between two." tr="Paylaşılan her hikâye iki kişi arasında kalır." />
+                <strong className="block text-ink">
+                  <Bilingual
+                    en="Private by design"
+                    tr="Gizlilik için tasarlandı"
+                  />
+                </strong>
+                <Bilingual
+                  en="Every shared story stays between two."
+                  tr="Paylaşılan her hikâye iki kişi arasında kalır."
+                />
               </p>
             </div>
           </div>
@@ -163,32 +192,107 @@ export default function Landing() {
       </section>
       <section className="border-y bg-wine px-5 py-16 text-center text-white">
         <p className="font-serif text-3xl leading-tight sm:text-5xl">
-          <Bilingual en="More than photos. More than messages." tr="Fotoğraflardan ve mesajlardan daha fazlası." />
+          <Bilingual
+            en="More than photos. More than messages."
+            tr="Fotoğraflardan ve mesajlardan daha fazlası."
+          />
         </p>
-        <p className="mt-3 text-white/60"><Bilingual en="A place to remember what mattered." tr="Değerli olanı hatırlayacağınız bir yer." /></p>
+        <p className="mt-3 text-white/60">
+          <Bilingual
+            en="A place to remember what mattered."
+            tr="Değerli olanı hatırlayacağınız bir yer."
+          />
+        </p>
       </section>
       <section id="about" className="px-5 py-24 sm:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-end">
-            <div><p className="eyebrow"><Bilingual en="What is Ourside?" tr="Ourside nedir?" /></p><h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight sm:text-6xl"><Bilingual en="A private world for " tr="Yalnızca " /><span className="italic text-wine"><Bilingual en="the two of you." tr="ikinize ait özel bir dünya." /></span></h2></div>
-            <p className="max-w-2xl text-base leading-8 text-ink/60 sm:text-lg"><Bilingual en="Ourside brings your photos, notes, future letters, milestones, and shared plans into one quiet place. It is not a social feed. It is a personal timeline that only you and your partner can build and revisit." tr="Ourside; fotoğraflarınızı, notlarınızı, gelecek mektuplarınızı, dönüm noktalarınızı ve ortak planlarınızı sakin bir alanda birleştirir. Bir sosyal akış değil; yalnızca sizin ve partnerinizin oluşturup yeniden yaşayabildiği kişisel bir zaman çizelgesidir." /></p>
+            <div>
+              <p className="eyebrow">
+                <Bilingual en="What is Ourside?" tr="Ourside nedir?" />
+              </p>
+              <h2 className="mt-4 max-w-2xl font-serif text-4xl leading-tight sm:text-6xl">
+                <Bilingual en="A private world for " tr="Yalnızca " />
+                <span className="italic text-wine">
+                  <Bilingual
+                    en="the two of you."
+                    tr="ikinize ait özel bir dünya."
+                  />
+                </span>
+              </h2>
+            </div>
+            <p className="max-w-2xl text-base leading-8 text-ink/60 sm:text-lg">
+              <Bilingual
+                en="Ourside brings your photos, notes, future letters, milestones, and shared plans into one quiet place. It is not a social feed. It is a personal timeline that only you and your partner can build and revisit."
+                tr="Ourside; fotoğraflarınızı, notlarınızı, gelecek mektuplarınızı, dönüm noktalarınızı ve ortak planlarınızı sakin bir alanda birleştirir. Bir sosyal akış değil; yalnızca sizin ve partnerinizin oluşturup yeniden yaşayabildiği kişisel bir zaman çizelgesidir."
+              />
+            </p>
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              [LockKeyhole, "Private by design", "Gizlilik için tasarlandı", "Only the two of you can enter.", "Yalnızca ikiniz erişebilirsiniz."],
-              [Camera, "Keep moments together", "Anları birlikte saklayın", "Photos and the stories behind them stay connected.", "Fotoğraflar ve hikâyeleri bir arada kalır."],
-              [TimerReset, "Write across time", "Zamana mektup bırakın", "Seal a letter for a date that matters.", "Önemli bir tarih için mektup mühürleyin."],
-              [Target, "Shape what comes next", "Geleceği birlikte kurun", "Turn shared plans into memories when they happen.", "Ortak planları gerçekleştiğinde anıya dönüştürün."],
-            ].map(([Icon, title, titleTr, text, textTr]) => <article key={title as string} className="rounded-[1.5rem] border bg-paper p-6 shadow-card"><span className="grid h-11 w-11 place-items-center rounded-full bg-wine/10 text-wine"><Icon className="h-5 w-5" /></span><h3 className="mt-6 font-serif text-2xl"><Bilingual en={title as string} tr={titleTr as string} /></h3><p className="mt-2 text-sm leading-6 text-ink/55"><Bilingual en={text as string} tr={textTr as string} /></p></article>)}
+              [
+                LockKeyhole,
+                "Private by design",
+                "Gizlilik için tasarlandı",
+                "Only the two of you can enter.",
+                "Yalnızca ikiniz erişebilirsiniz.",
+              ],
+              [
+                Camera,
+                "Keep moments together",
+                "Anları birlikte saklayın",
+                "Photos and the stories behind them stay connected.",
+                "Fotoğraflar ve hikâyeleri bir arada kalır.",
+              ],
+              [
+                TimerReset,
+                "Write across time",
+                "Zamana mektup bırakın",
+                "Seal a letter for a date that matters.",
+                "Önemli bir tarih için mektup mühürleyin.",
+              ],
+              [
+                Target,
+                "Shape what comes next",
+                "Geleceği birlikte kurun",
+                "Turn shared plans into memories when they happen.",
+                "Ortak planları gerçekleştiğinde anıya dönüştürün.",
+              ],
+            ].map(([Icon, title, titleTr, text, textTr]) => (
+              <article
+                key={title as string}
+                className="rounded-[1.5rem] border bg-paper p-6 shadow-card"
+              >
+                <span className="grid h-11 w-11 place-items-center rounded-full bg-wine/10 text-wine">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-6 font-serif text-2xl">
+                  <Bilingual en={title as string} tr={titleTr as string} />
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-ink/55">
+                  <Bilingual en={text as string} tr={textTr as string} />
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
       <section id="features" className="mx-auto max-w-7xl px-5 py-28">
         <div className="max-w-2xl">
-          <p className="eyebrow"><Bilingual en="Made for the two of you" tr="İkiniz için tasarlandı" /></p>
+          <p className="eyebrow">
+            <Bilingual
+              en="Made for the two of you"
+              tr="İkiniz için tasarlandı"
+            />
+          </p>
           <h2 className="mt-4 font-serif text-4xl tracking-tight sm:text-6xl">
-            <Bilingual en="Everything worth keeping, " tr="Saklamaya değer her şey, " />
-            <span className="italic text-wine"><Bilingual en="finally together." tr="nihayet bir arada." /></span>
+            <Bilingual
+              en="Everything worth keeping, "
+              tr="Saklamaya değer her şey, "
+            />
+            <span className="italic text-wine">
+              <Bilingual en="finally together." tr="nihayet bir arada." />
+            </span>
           </h2>
         </div>
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -201,10 +305,18 @@ export default function Landing() {
               <div className="grid h-12 w-12 place-items-center rounded-2xl bg-wine/8 text-wine">
                 <Icon />
               </div>
-              <h3 className="mt-8 font-serif text-2xl"><Bilingual en={title} tr={titleTr} /></h3>
-              <p className="mt-2 text-sm leading-6 text-ink/55"><Bilingual en={text} tr={textTr} /></p>
-              <Link href={appUrl(href)} className="focus-ring mt-6 inline-flex items-center gap-1 rounded-md text-xs font-bold text-wine">
-                <Bilingual en="Discover" tr="Keşfet" /> <ArrowRight className="h-3.5 w-3.5" />
+              <h3 className="mt-8 font-serif text-2xl">
+                <Bilingual en={title} tr={titleTr} />
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-ink/55">
+                <Bilingual en={text} tr={textTr} />
+              </p>
+              <Link
+                href={appUrl(href)}
+                className="focus-ring mt-6 inline-flex items-center gap-1 rounded-md text-xs font-bold text-wine"
+              >
+                <Bilingual en="Discover" tr="Keşfet" />{" "}
+                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </article>
           ))}
@@ -213,18 +325,56 @@ export default function Landing() {
       <section id="story" className="relative bg-[#f3ebe5] px-5 py-28">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <p className="eyebrow"><Bilingual en="Two lives. One story." tr="İki hayat. Tek hikâye." /></p>
+            <p className="eyebrow">
+              <Bilingual
+                en="Two lives. One story."
+                tr="İki hayat. Tek hikâye."
+              />
+            </p>
             <h2 className="mx-auto mt-4 max-w-3xl font-serif text-4xl sm:text-6xl">
-              <Bilingual en="Look back and see how " tr="Geriye bakın ve nasıl " />
-              <span className="italic text-wine"><Bilingual en="you became you." tr="siz olduğunuzu görün." /></span>
+              <Bilingual
+                en="Look back and see how "
+                tr="Geriye bakın ve nasıl "
+              />
+              <span className="italic text-wine">
+                <Bilingual en="you became you." tr="siz olduğunuzu görün." />
+              </span>
             </h2>
           </div>
           <div className="relative mx-auto mt-16 max-w-4xl space-y-5">
             {[
-              ["Apr 2025", "The coffee shop we kept going back to", "Her hafta döndüğümüz küçük kahveci", "A small ritual that quietly became ours.", "Sessizce bize ait olan küçük bir alışkanlık.", images[1]],
-              ["Nov 2025", "Our first weekend trip", "İlk hafta sonu yolculuğumuz", "No itinerary, one shared playlist, and the wrong train.", "Plansız bir rota, ortak bir çalma listesi ve yanlış tren.", images[3]],
-              ["Feb 2026", "The day we moved in", "Birlikte eve çıktığımız gün", "Keys on the table and boxes in every room.", "Masada anahtarlar, her odada kutular.", images[4]],
-              ["Oct 2027", "A letter for our next anniversary", "Gelecek yıldönümümüze bir mektup", "Sealed today. Waiting for another chapter.", "Bugün mühürlendi. Yeni bir bölümü bekliyor.", images[5]],
+              [
+                "Apr 2025",
+                "The coffee shop we kept going back to",
+                "Her hafta döndüğümüz küçük kahveci",
+                "A small ritual that quietly became ours.",
+                "Sessizce bize ait olan küçük bir alışkanlık.",
+                images[1],
+              ],
+              [
+                "Nov 2025",
+                "Our first weekend trip",
+                "İlk hafta sonu yolculuğumuz",
+                "No itinerary, one shared playlist, and the wrong train.",
+                "Plansız bir rota, ortak bir çalma listesi ve yanlış tren.",
+                images[3],
+              ],
+              [
+                "Feb 2026",
+                "The day we moved in",
+                "Birlikte eve çıktığımız gün",
+                "Keys on the table and boxes in every room.",
+                "Masada anahtarlar, her odada kutular.",
+                images[4],
+              ],
+              [
+                "Oct 2027",
+                "A letter for our next anniversary",
+                "Gelecek yıldönümümüze bir mektup",
+                "Sealed today. Waiting for another chapter.",
+                "Bugün mühürlendi. Yeni bir bölümü bekliyor.",
+                images[5],
+              ],
             ].map((m) => (
               <div
                 key={m[1]}
@@ -232,11 +382,19 @@ export default function Landing() {
               >
                 <div className="relative aspect-[4/3] overflow-hidden md:aspect-auto md:min-h-60">
                   {/* Ratio-based photo containers prevent distortion at mobile breakpoints. */}
-                  <Image src={m[5]} alt={`Editorial memory: ${m[1]}`} fill sizes="(max-width: 767px) 100vw, 260px" className="object-cover transition duration-700 group-hover:scale-[1.035] motion-reduce:transition-none" />
+                  <Image
+                    src={m[5]}
+                    alt={`Editorial memory: ${m[1]}`}
+                    fill
+                    sizes="(max-width: 767px) 100vw, 260px"
+                    className="object-cover transition duration-700 group-hover:scale-[1.035] motion-reduce:transition-none"
+                  />
                 </div>
                 <div className="flex min-h-52 flex-col justify-center p-7 text-left md:p-9">
                   <span className="eyebrow">{m[0]}</span>
-                  <h3 className="mt-2 font-serif text-3xl"><Bilingual en={m[1]} tr={m[2]} /></h3>
+                  <h3 className="mt-2 font-serif text-3xl">
+                    <Bilingual en={m[1]} tr={m[2]} />
+                  </h3>
                   <p className="mt-3 font-serif text-lg italic text-ink/50">
                     “<Bilingual en={m[3]} tr={m[4]} />”
                   </p>
@@ -252,7 +410,10 @@ export default function Landing() {
           <div>
             <p className="eyebrow">The Ourside Vault</p>
             <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-6xl">
-              <Bilingual en="Write something today. " tr="Bugün bir şeyler yazın. " />
+              <Bilingual
+                en="Write something today. "
+                tr="Bugün bir şeyler yazın. "
+              />
               <span className="italic text-wine">
                 Open it when life feels different.
               </span>
@@ -293,20 +454,27 @@ export default function Landing() {
           </div>
         </div>
       </section>
-      <PricingSection />
+      {!PRODUCT_STATUS.publicSignupEnabled && <PortfolioCaseStudy />}
+      {PRODUCT_STATUS.publicSignupEnabled && <PricingSection />}
       <section className="mx-5 mb-8 overflow-hidden rounded-[2.5rem] bg-ink px-6 py-24 text-center text-white">
         <Sparkles className="mx-auto mb-6 text-rose" />
         <h2 className="font-serif text-4xl sm:text-6xl">
-          <Bilingual en="Start saving your story together." tr="Hikâyenizi birlikte saklamaya başlayın." />
+          <Bilingual
+            en={PRODUCT_STATUS.publicSignupEnabled ? "Start saving your story together." : "A complete product concept, preserved as a case study."}
+            tr={PRODUCT_STATUS.publicSignupEnabled ? "Hikâyenizi birlikte saklamaya başlayın." : "Vaka çalışması olarak korunan eksiksiz bir ürün konsepti."}
+          />
         </h2>
         <p className="mt-4 text-white/55">
-          <Bilingual en="The best memories rarely announce themselves." tr="En güzel anılar genellikle kendini önceden belli etmez." />
+          <Bilingual
+            en="The best memories rarely announce themselves."
+            tr="En güzel anılar genellikle kendini önceden belli etmez."
+          />
         </p>
         <PremiumButton
-          href={appUrl("/signup")}
+          href={PRODUCT_STATUS.publicSignupEnabled ? appUrl("/signup") : "#case-study"}
           className="mt-8 bg-[#f4ded8] text-wine hover:bg-white"
         >
-          Create Our Space
+          <Bilingual en={PRODUCT_STATUS.publicSignupEnabled ? "Create Our Space" : "Explore the case study"} tr={PRODUCT_STATUS.publicSignupEnabled ? "Alanımızı oluştur" : "Vaka çalışmasını incele"} />
         </PremiumButton>
       </section>
       <footer className="mx-auto flex max-w-7xl flex-col gap-8 px-5 py-12 text-sm text-ink/55 md:flex-row md:items-center md:justify-between">

@@ -1,5 +1,6 @@
 import { AdminHeader, DataTable } from "@/components/admin/AdminUI";
 import { getAdminIdentity, getAdminUsers } from "@/features/admin/admin.server";
+import { PRODUCT_STATUS } from "@/config/product-status";
 
 export default async function AdminSettings() {
   const [identity, admins] = await Promise.all([getAdminIdentity(), getAdminUsers()]);
@@ -16,6 +17,11 @@ export default async function AdminSettings() {
         <Status label="Analytics" value={process.env.NEXT_PUBLIC_ANALYTICS_ENABLED === "false" ? "disabled" : "enabled"} />
       </div>
     </section>
+    {!PRODUCT_STATUS.publicSignupEnabled && <section className="mt-5 rounded-2xl border border-wine/20 bg-wine/5 p-5 text-ink shadow-card">
+      <p className="text-xs font-bold uppercase tracking-wider text-wine">Product availability</p>
+      <p className="mt-2 text-lg font-bold">Portfolio mode is active</p>
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-ink/60">Public signups and new shared-space creation are disabled. Existing authorized users and administrators can still log in.</p>
+    </section>}
     <section className="mt-5 rounded-2xl border border-amber-300/70 bg-amber-50 p-5 text-amber-950 shadow-card">
       <p className="text-xs font-bold uppercase tracking-wider">Supabase Auth SMTP</p>
       <p className="mt-2 text-lg font-bold">Manual check required</p>

@@ -1,5 +1,11 @@
 # Production deployment guide
 
+## Portfolio mode
+
+Production currently runs as a portfolio case study. Set `NEXT_PUBLIC_PRODUCT_MODE=portfolio`, `NEXT_PUBLIC_PUBLIC_SIGNUP_ENABLED=false`, and `NEXT_PUBLIC_DEMO_ACCESS_ENABLED=false` in Vercel. Existing login/admin access remains available. New account and couple-space creation stays closed.
+
+Application checks are not a substitute for the provider boundary: also disable **Allow new users to sign up** in Supabase Authentication settings. See `PORTFOLIO_MODE_GUIDE.md` for re-enabling and data-safety steps.
+
 ## Authentication email prerequisite
 
 Before public beta, complete the manual Resend custom SMTP setup in [SUPABASE_RESEND_SMTP_GUIDE.md](SUPABASE_RESEND_SMTP_GUIDE.md). Supabase Auth SMTP is configured in Supabase Dashboard and cannot be verified safely from application code. Use [AUTH_EMAIL_DEBUG_GUIDE.md](AUTH_EMAIL_DEBUG_GUIDE.md) for delivery or rate-limit failures.

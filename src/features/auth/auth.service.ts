@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { dispatchNotificationEvent } from "@/features/notifications/notification.events";
 import { runtimeAppUrl } from "@/config/brand";
 import { mapAuthError, type AuthErrorCode } from "./auth-errors";
+import { PRODUCT_STATUS, SIGNUP_CLOSED_MESSAGE } from "@/config/product-status";
 
 export type AuthResult = { ok: true; requiresEmailConfirmation?: boolean } | { ok: false; message: string; code?: AuthErrorCode };
 type OAuthProvider = "google" | "apple";
@@ -35,6 +36,11 @@ export const authService = {
     password: string;
     redirectTo?: string;
   }): Promise<AuthResult> {
+    // Guard the auth boundary so stale forms cannot send signup requests or
+    // verification emails while portfolio mode is active.
+    if (!PRODUCT_STATUS.publicSignupEnabled) {
+      return { ok: false, code: "signup_closed", message: SIGNUP_CLOSED_MESSAGE };
+    }
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
 

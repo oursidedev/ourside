@@ -6,6 +6,7 @@
  * and confirmation flows never expose raw provider details.
  */
 export type AuthErrorCode =
+  | "signup_closed"
   | "email_rate_limit"
   | "invalid_credentials"
   | "email_not_confirmed"
@@ -47,6 +48,7 @@ export function getAuthErrorMessage(
 ) {
   const tr = locale === "tr";
   const messages: Record<Exclude<AuthErrorCode, "email_rate_limit">, [string, string]> = {
+    signup_closed: ["Ourside is currently closed to new signups. Existing authorized users can still log in.", "Ourside şu anda yeni kayıtlara kapalı. Mevcut yetkili kullanıcılar giriş yapmaya devam edebilir."],
     invalid_credentials: ["The email address or password is incorrect.", "E-posta adresi veya şifre hatalı."],
     email_not_confirmed: ["Please verify your email before logging in.", "Giriş yapmadan önce e-posta adresinizi doğrulayın."],
     email_exists: ["An account already exists with this email address. Please log in or reset your password.", "Bu e-posta adresiyle zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın."],

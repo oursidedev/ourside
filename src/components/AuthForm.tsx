@@ -3,7 +3,15 @@
 import { FormEvent, useEffect, useState, type ComponentType } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, Eye, EyeOff, LockKeyhole, Mail, UserRound, X } from "lucide-react";
+import {
+  Check,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  UserRound,
+  X,
+} from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa6";
 import { PremiumButton } from "./ui/PremiumButton";
@@ -12,7 +20,11 @@ import { useLocale } from "@/i18n/LocaleProvider";
 import { passwordSchema } from "@/lib/validations/schemas";
 import { runtimeAppUrl } from "@/config/brand";
 import { AUTH_EMAIL_RESEND_COOLDOWN_SECONDS } from "@/features/auth/auth.constants";
-import { getAuthErrorMessage, type AuthErrorCode } from "@/features/auth/auth-errors";
+import {
+  getAuthErrorMessage,
+  type AuthErrorCode,
+} from "@/features/auth/auth-errors";
+import { PRODUCT_STATUS } from "@/config/product-status";
 
 type Mode = "login" | "signup" | "forgot";
 
@@ -24,32 +36,67 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [password, setPassword] = useState("");
-  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
-  const [oauth, setOauth] = useState<{ google: boolean; apple: boolean } | null>(null);
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(
+    null,
+  );
+  const [oauth, setOauth] = useState<{
+    google: boolean;
+    apple: boolean;
+  } | null>(null);
 
   useEffect(() => {
-    authService.getOAuthAvailability().then(setOauth);
+    if (PRODUCT_STATUS.publicSignupEnabled)
+      authService.getOAuthAvailability().then(setOauth);
     const params = new URLSearchParams(location.search);
     if (params.get("error") === "oauth") {
-      setMessage(tr ? "Sosyal giriş tamamlanamadı. Lütfen tekrar deneyin." : "Social login could not be completed. Please try again.");
+      setMessage(
+        tr
+          ? "Sosyal giriş tamamlanamadı. Lütfen tekrar deneyin."
+          : "Social login could not be completed. Please try again.",
+      );
     } else if (params.get("password") === "changed") {
-      setMessage(tr ? "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapın." : "Your password was changed successfully. Log in with your new password.");
+      setMessage(
+        tr
+          ? "Şifreniz başarıyla değiştirildi. Yeni şifrenizle giriş yapın."
+          : "Your password was changed successfully. Log in with your new password.",
+      );
     }
   }, [tr]);
 
   const requestedNext = searchParams.get("next");
-  const nextPath = () => requestedNext || (mode === "signup" ? "/onboarding" : "/dashboard");
-  const preservedQuery = requestedNext ? `?next=${encodeURIComponent(requestedNext)}` : "";
+  const nextPath = () =>
+    requestedNext || (mode === "signup" ? "/onboarding" : "/dashboard");
+  const preservedQuery = requestedNext
+    ? `?next=${encodeURIComponent(requestedNext)}`
+    : "";
   const copy = {
     login: tr
-      ? ["Hikâyenize yeniden hoş geldiniz.", "E-posta adresiniz ve şifrenizle güvenli şekilde giriş yapın."]
-      : ["Welcome back to your story.", "Log in securely with your email address and password."],
+      ? [
+          "Hikâyenize yeniden hoş geldiniz.",
+          "E-posta adresiniz ve şifrenizle güvenli şekilde giriş yapın.",
+        ]
+      : [
+          "Welcome back to your story.",
+          "Log in securely with your email address and password.",
+        ],
     signup: tr
-      ? ["İkiniz için bir yer açın.", "Güçlü bir şifreyle hesabınızı oluşturun, ardından e-posta adresinizi doğrulayın."]
-      : ["Make a place for the two of you.", "Create your account with a strong password, then verify your email address."],
+      ? [
+          "İkiniz için bir yer açın.",
+          "Güçlü bir şifreyle hesabınızı oluşturun, ardından e-posta adresinizi doğrulayın.",
+        ]
+      : [
+          "Make a place for the two of you.",
+          "Create your account with a strong password, then verify your email address.",
+        ],
     forgot: tr
-      ? ["Yolunuzu yeniden bulun.", "Güvenli şifre sıfırlama bağlantısını e-posta adresinize göndereceğiz."]
-      : ["Find your way back.", "We’ll send a secure password reset link to your inbox."],
+      ? [
+          "Yolunuzu yeniden bulun.",
+          "Güvenli şifre sıfırlama bağlantısını e-posta adresinize göndereceğiz.",
+        ]
+      : [
+          "Find your way back.",
+          "We’ll send a secure password reset link to your inbox.",
+        ],
   }[mode];
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -64,77 +111,129 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
     if (mode === "signup" && !passwordSchema.safeParse(pass).success) {
       setBusy(false);
-      setMessage(tr ? "Lütfen tüm şifre kurallarını tamamlayın." : "Please complete every password requirement.");
+      setMessage(
+        tr
+          ? "Lütfen tüm şifre kurallarını tamamlayın."
+          : "Please complete every password requirement.",
+      );
       return;
     }
 
     let result;
     try {
-      result = mode === "signup"
-        ? await authService.signUp({
-            firstName: String(data.get("firstName") || "").trim(),
-            lastName: String(data.get("lastName") || "").trim(),
-            email,
-            password: pass,
-            redirectTo: runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(nextPath())}`),
-          })
-        : mode === "login"
-          ? await authService.signIn({ email, password: pass })
-          : await authService.resetPassword(email);
+      result =
+        mode === "signup"
+          ? await authService.signUp({
+              firstName: String(data.get("firstName") || "").trim(),
+              lastName: String(data.get("lastName") || "").trim(),
+              email,
+              password: pass,
+              redirectTo: runtimeAppUrl(
+                `/auth/callback?next=${encodeURIComponent(nextPath())}`,
+              ),
+            })
+          : mode === "login"
+            ? await authService.signIn({ email, password: pass })
+            : await authService.resetPassword(email);
     } catch {
-      result = { ok: false as const, code: "network_error" as AuthErrorCode, message: "" };
+      result = {
+        ok: false as const,
+        code: "network_error" as AuthErrorCode,
+        message: "",
+      };
     } finally {
       setBusy(false);
     }
     if (!result.ok) {
-      const action = mode === "forgot" ? "password_reset" : mode === "signup" ? "verification" : "generic";
-      setMessage(result.code ? getAuthErrorMessage(result.code, tr ? "tr" : "en", action) : result.message);
+      const action =
+        mode === "forgot"
+          ? "password_reset"
+          : mode === "signup"
+            ? "verification"
+            : "generic";
+      setMessage(
+        result.code
+          ? getAuthErrorMessage(result.code, tr ? "tr" : "en", action)
+          : result.message,
+      );
       return;
     }
 
     if (mode === "signup") {
       if (result.requiresEmailConfirmation) setConfirmationEmail(email);
       else router.push(nextPath());
-    }
-    else if (mode === "login") router.push(nextPath());
-    else setMessage(tr
-      ? "Bu e-posta adresine ait bir hesap varsa şifre sıfırlama bağlantısı gönderdik."
-      : "If an account exists for this email, we sent a password reset link.");
+    } else if (mode === "login") router.push(nextPath());
+    else
+      setMessage(
+        tr
+          ? "Bu e-posta adresine ait bir hesap varsa şifre sıfırlama bağlantısı gönderdik."
+          : "If an account exists for this email, we sent a password reset link.",
+      );
   }
 
   async function socialSignIn(provider: "google" | "apple") {
     if (busy) return;
     if (oauth && !oauth[provider]) {
-      setMessage(provider === "google"
-        ? (tr ? "Google girişi henüz Supabase’te etkinleştirilmedi. Google OAuth Client ID ve Secret eklenmelidir." : "Google login is not enabled in Supabase yet. A Google OAuth Client ID and Secret are required.")
-        : (tr ? "Apple girişi henüz Supabase’te etkinleştirilmedi. Apple Developer Service ID ve özel anahtar eklenmelidir." : "Apple login is not enabled in Supabase yet. An Apple Developer Service ID and private key are required."));
+      setMessage(
+        provider === "google"
+          ? tr
+            ? "Google girişi henüz Supabase’te etkinleştirilmedi. Google OAuth Client ID ve Secret eklenmelidir."
+            : "Google login is not enabled in Supabase yet. A Google OAuth Client ID and Secret are required."
+          : tr
+            ? "Apple girişi henüz Supabase’te etkinleştirilmedi. Apple Developer Service ID ve özel anahtar eklenmelidir."
+            : "Apple login is not enabled in Supabase yet. An Apple Developer Service ID and private key are required.",
+      );
       return;
     }
     setBusy(true);
     setMessage(null);
     const destination = nextPath();
-    const callback = runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`);
+    const callback = runtimeAppUrl(
+      `/auth/callback?next=${encodeURIComponent(destination)}`,
+    );
     const result = await authService.signInWithOAuth(provider, callback);
     if (!result.ok) {
       setBusy(false);
-      setMessage(result.code ? getAuthErrorMessage(result.code, tr ? "tr" : "en") : result.message);
+      setMessage(
+        result.code
+          ? getAuthErrorMessage(result.code, tr ? "tr" : "en")
+          : result.message,
+      );
     }
   }
 
   if (confirmationEmail) {
-    return <EmailConfirmationStep email={confirmationEmail} tr={tr} destination={nextPath()} />;
+    return (
+      <EmailConfirmationStep
+        email={confirmationEmail}
+        tr={tr}
+        destination={nextPath()}
+      />
+    );
   }
 
   return (
     <>
-      <h1 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">{copy[0]}</h1>
+      <h1 className="mt-4 font-serif text-4xl leading-tight sm:text-5xl">
+        {copy[0]}
+      </h1>
       <p className="mt-4 text-sm leading-6 text-ink/55">{copy[1]}</p>
 
-      {mode !== "forgot" && (
+      {mode !== "forgot" && PRODUCT_STATUS.publicSignupEnabled && (
         <>
           <div className="mt-8 grid grid-cols-2 gap-3">
-            <SocialButton icon={FcGoogle} label="Google" disabled={busy} onClick={() => socialSignIn("google")} />
-            <SocialButton icon={FaApple} label="Apple" disabled={busy} onClick={() => socialSignIn("apple")} />
+            <SocialButton
+              icon={FcGoogle}
+              label="Google"
+              disabled={busy}
+              onClick={() => socialSignIn("google")}
+            />
+            <SocialButton
+              icon={FaApple}
+              label="Apple"
+              disabled={busy}
+              onClick={() => socialSignIn("apple")}
+            />
           </div>
           <div className="my-7 flex items-center gap-4 text-xs text-ink/35">
             <span className="h-px flex-1 bg-ink/10" />
@@ -144,20 +243,56 @@ export function AuthForm({ mode }: { mode: Mode }) {
         </>
       )}
 
-      <form onSubmit={submit} className={mode === "forgot" ? "mt-8 space-y-5" : "space-y-5"}>
-        {mode === "signup" && <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={tr ? "Adınız" : "First name"} name="firstName" type="text" autoComplete="given-name" placeholder={tr ? "Adınız" : "First name"} icon={UserRound} />
-          <Field label={tr ? "Soyadınız" : "Last name"} name="lastName" type="text" autoComplete="family-name" placeholder={tr ? "Soyadınız" : "Last name"} icon={UserRound} />
-        </div>}
-        <Field label={tr ? "E-posta adresi" : "Email address"} name="email" type="email" autoComplete="email" placeholder="you@example.com" icon={Mail} />
+      <form
+        onSubmit={submit}
+        className={mode === "forgot" ? "mt-8 space-y-5" : "space-y-5"}
+      >
+        {mode === "signup" && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label={tr ? "Adınız" : "First name"}
+              name="firstName"
+              type="text"
+              autoComplete="given-name"
+              placeholder={tr ? "Adınız" : "First name"}
+              icon={UserRound}
+            />
+            <Field
+              label={tr ? "Soyadınız" : "Last name"}
+              name="lastName"
+              type="text"
+              autoComplete="family-name"
+              placeholder={tr ? "Soyadınız" : "Last name"}
+              icon={UserRound}
+            />
+          </div>
+        )}
+        <Field
+          label={tr ? "E-posta adresi" : "Email address"}
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          icon={Mail}
+        />
         {mode !== "forgot" && (
           <>
             <Field
               label={tr ? "Şifre" : "Password"}
               name="password"
               type="password"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              placeholder={mode === "signup" ? (tr ? "Güçlü bir şifre oluşturun" : "Create a strong password") : (tr ? "Şifrenizi girin" : "Enter your password")}
+              autoComplete={
+                mode === "signup" ? "new-password" : "current-password"
+              }
+              placeholder={
+                mode === "signup"
+                  ? tr
+                    ? "Güçlü bir şifre oluşturun"
+                    : "Create a strong password"
+                  : tr
+                    ? "Şifrenizi girin"
+                    : "Enter your password"
+              }
               icon={LockKeyhole}
               onValue={mode === "signup" ? setPassword : undefined}
             />
@@ -170,25 +305,102 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <input type="checkbox" className="h-4 w-4 accent-wine" />
               {tr ? "Oturumumu açık tut" : "Keep me signed in"}
             </label>
-            <Link href="/forgot-password" className="inline-flex min-h-11 items-center font-bold text-wine hover:underline">{tr ? "Şifrenizi mi unuttunuz?" : "Forgot password?"}</Link>
+            <Link
+              href="/forgot-password"
+              className="inline-flex min-h-11 items-center font-bold text-wine hover:underline"
+            >
+              {tr ? "Şifrenizi mi unuttunuz?" : "Forgot password?"}
+            </Link>
           </div>
         )}
-        {message && <div role="status" className="rounded-xl border border-wine/15 bg-wine/5 p-3 text-sm text-wine">{message}</div>}
-        <PremiumButton type="submit" disabled={busy} ariaBusy={busy} className="h-14 w-full">
-          {busy ? (tr ? "Lütfen bekleyin…" : "Please wait…") : mode === "login" ? (tr ? "Giriş yap" : "Log in") : mode === "signup" ? (tr ? "Hesabımı oluştur" : "Create my account") : (tr ? "Sıfırlama bağlantısı gönder" : "Send reset link")}
+        {message && (
+          <div
+            role="status"
+            className="rounded-xl border border-wine/15 bg-wine/5 p-3 text-sm text-wine"
+          >
+            {message}
+          </div>
+        )}
+        <PremiumButton
+          type="submit"
+          disabled={busy}
+          ariaBusy={busy}
+          className="h-14 w-full"
+        >
+          {busy
+            ? tr
+              ? "Lütfen bekleyin…"
+              : "Please wait…"
+            : mode === "login"
+              ? tr
+                ? "Giriş yap"
+                : "Log in"
+              : mode === "signup"
+                ? tr
+                  ? "Hesabımı oluştur"
+                  : "Create my account"
+                : tr
+                  ? "Sıfırlama bağlantısı gönder"
+                  : "Send reset link"}
         </PremiumButton>
       </form>
 
-      <p className="mt-8 text-center text-sm text-ink/55">
-        {mode === "login" ? <>{tr ? "Burada yeni misiniz? " : "New here? "}<Link href={`/signup${preservedQuery}`} className="font-bold text-wine">{requestedNext ? (tr ? "Hesap oluşturun" : "Create an account") : (tr ? "Ourside’ınızı oluşturun" : "Create your Ourside")}</Link></>
-          : mode === "signup" ? <>{tr ? "Zaten bir hesabınız var mı? " : "Have an account? "}<Link href={`/login${preservedQuery}`} className="font-bold text-wine">{tr ? "Giriş yapın" : "Log in"}</Link></>
-            : <Link href="/login" className="font-bold text-wine">{tr ? "← Girişe dön" : "← Back to login"}</Link>}
-      </p>
+      {!PRODUCT_STATUS.publicSignupEnabled && mode === "login" ? (
+        <p className="mt-8 text-center text-sm text-ink/55">
+          <Link href="/" className="font-bold text-wine">
+            {tr
+              ? "Portfolyo vaka çalışmasını görüntüleyin"
+              : "View the portfolio case study"}
+          </Link>
+        </p>
+      ) : (
+        <p className="mt-8 text-center text-sm text-ink/55">
+          {mode === "login" ? (
+            <>
+              {tr ? "Burada yeni misiniz? " : "New here? "}
+              <Link
+                href={`/signup${preservedQuery}`}
+                className="font-bold text-wine"
+              >
+                {requestedNext
+                  ? tr
+                    ? "Hesap oluşturun"
+                    : "Create an account"
+                  : tr
+                    ? "Ourside’ınızı oluşturun"
+                    : "Create your Ourside"}
+              </Link>
+            </>
+          ) : mode === "signup" ? (
+            <>
+              {tr ? "Zaten bir hesabınız var mı? " : "Have an account? "}
+              <Link
+                href={`/login${preservedQuery}`}
+                className="font-bold text-wine"
+              >
+                {tr ? "Giriş yapın" : "Log in"}
+              </Link>
+            </>
+          ) : (
+            <Link href="/login" className="font-bold text-wine">
+              {tr ? "← Girişe dön" : "← Back to login"}
+            </Link>
+          )}
+        </p>
+      )}
     </>
   );
 }
 
-function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: boolean; destination: string }) {
+function EmailConfirmationStep({
+  email,
+  tr,
+  destination,
+}: {
+  email: string;
+  tr: boolean;
+  destination: string;
+}) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
@@ -196,14 +408,20 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
   useEffect(() => {
     const key = `ourside:auth-email-cooldown:${email}`;
     const stored = Number(localStorage.getItem(key) || 0);
-    const expiresAt = stored > Date.now() ? stored : Date.now() + AUTH_EMAIL_RESEND_COOLDOWN_SECONDS * 1000;
+    const expiresAt =
+      stored > Date.now()
+        ? stored
+        : Date.now() + AUTH_EMAIL_RESEND_COOLDOWN_SECONDS * 1000;
     localStorage.setItem(key, String(expiresAt));
     setCooldown(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
   }, [email]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
-    const timer = window.setInterval(() => setCooldown((current) => Math.max(0, current - 1)), 1000);
+    const timer = window.setInterval(
+      () => setCooldown((current) => Math.max(0, current - 1)),
+      1000,
+    );
     return () => window.clearInterval(timer);
   }, [cooldown]);
 
@@ -212,15 +430,25 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
     setBusy(true);
     setMessage(null);
     const expiresAt = Date.now() + AUTH_EMAIL_RESEND_COOLDOWN_SECONDS * 1000;
-    localStorage.setItem(`ourside:auth-email-cooldown:${email}`, String(expiresAt));
+    localStorage.setItem(
+      `ourside:auth-email-cooldown:${email}`,
+      String(expiresAt),
+    );
     setCooldown(AUTH_EMAIL_RESEND_COOLDOWN_SECONDS);
     try {
-      const result = await authService.resendSignupConfirmation(email, runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`));
-      setMessage(result.ok
-        ? (tr ? "Doğrulama e-postası yeniden gönderildi." : "The verification email has been sent again.")
-        : result.code
-          ? getAuthErrorMessage(result.code, tr ? "tr" : "en", "verification")
-          : result.message);
+      const result = await authService.resendSignupConfirmation(
+        email,
+        runtimeAppUrl(`/auth/callback?next=${encodeURIComponent(destination)}`),
+      );
+      setMessage(
+        result.ok
+          ? tr
+            ? "Doğrulama e-postası yeniden gönderildi."
+            : "The verification email has been sent again."
+          : result.code
+            ? getAuthErrorMessage(result.code, tr ? "tr" : "en", "verification")
+            : result.message,
+      );
     } catch {
       setMessage(getAuthErrorMessage("network_error", tr ? "tr" : "en"));
     } finally {
@@ -230,23 +458,56 @@ function EmailConfirmationStep({ email, tr, destination }: { email: string; tr: 
 
   return (
     <div aria-live="polite">
-      <div className="grid h-12 w-12 place-items-center rounded-full bg-wine/10 text-wine"><Mail /></div>
-      <h1 className="mt-5 font-serif text-4xl">{tr ? "E-postanızı doğrulayın." : "Verify your email."}</h1>
+      <div className="grid h-12 w-12 place-items-center rounded-full bg-wine/10 text-wine">
+        <Mail />
+      </div>
+      <h1 className="mt-5 font-serif text-4xl">
+        {tr ? "E-postanızı doğrulayın." : "Verify your email."}
+      </h1>
       <p className="mt-3 text-sm leading-6 text-ink/55">
-        {tr ? `${email} adresine bir doğrulama bağlantısı gönderdik. Hesabınızı etkinleştirmek için e-postadaki bağlantıya tıklayın.` : `We sent a verification link to ${email}. Click the link in the email to activate your account.`}
+        {tr
+          ? `${email} adresine bir doğrulama bağlantısı gönderdik. Hesabınızı etkinleştirmek için e-postadaki bağlantıya tıklayın.`
+          : `We sent a verification link to ${email}. Click the link in the email to activate your account.`}
       </p>
       <div className="mt-7 rounded-2xl border border-wine/10 bg-wine/5 p-4 text-sm leading-6 text-ink/65">
-        {tr ? "E-posta görünmüyorsa spam veya gereksiz klasörünü kontrol edin." : "If you cannot see it, check your spam or junk folder."}
+        {tr
+          ? "E-posta görünmüyorsa spam veya gereksiz klasörünü kontrol edin."
+          : "If you cannot see it, check your spam or junk folder."}
       </div>
-      {message && <div role="status" className="mt-4 rounded-xl border border-wine/15 bg-white p-3 text-sm text-wine">{message}</div>}
-      <PremiumButton type="button" variant="secondary" disabled={busy || cooldown > 0} ariaBusy={busy} onClick={resend} className="mt-5 w-full">
+      {message && (
+        <div
+          role="status"
+          className="mt-4 rounded-xl border border-wine/15 bg-white p-3 text-sm text-wine"
+        >
+          {message}
+        </div>
+      )}
+      <PremiumButton
+        type="button"
+        variant="secondary"
+        disabled={busy || cooldown > 0}
+        ariaBusy={busy}
+        onClick={resend}
+        className="mt-5 w-full"
+      >
         {busy
-          ? (tr ? "Gönderiliyor…" : "Sending…")
+          ? tr
+            ? "Gönderiliyor…"
+            : "Sending…"
           : cooldown > 0
-            ? (tr ? `${cooldown} sn sonra yeniden gönder` : `Resend email in ${cooldown}s`)
-            : (tr ? "Doğrulama e-postasını yeniden gönder" : "Resend verification email")}
+            ? tr
+              ? `${cooldown} sn sonra yeniden gönder`
+              : `Resend email in ${cooldown}s`
+            : tr
+              ? "Doğrulama e-postasını yeniden gönder"
+              : "Resend verification email"}
       </PremiumButton>
-      <Link href="/login" className="mt-5 block text-center text-sm font-bold text-wine hover:underline">{tr ? "Giriş sayfasına dön" : "Back to login"}</Link>
+      <Link
+        href="/login"
+        className="mt-5 block text-center text-sm font-bold text-wine hover:underline"
+      >
+        {tr ? "Giriş sayfasına dön" : "Back to login"}
+      </Link>
     </div>
   );
 }
@@ -255,17 +516,102 @@ function PasswordRules({ value, tr }: { value: string; tr: boolean }) {
   const rules = [
     [value.length >= 8, tr ? "En az 8 karakter" : "At least 8 characters"],
     [/[A-ZÇĞİÖŞÜ]/.test(value), tr ? "Bir büyük harf" : "One uppercase letter"],
-    [/[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]/.test(value), tr ? "Bir özel karakter" : "One special character"],
+    [
+      /[^A-Za-z0-9ÇĞİÖŞÜçğıöşü]/.test(value),
+      tr ? "Bir özel karakter" : "One special character",
+    ],
   ] as const;
-  return <div className="grid gap-2 rounded-2xl border border-ink/8 bg-cream/55 p-4 sm:grid-cols-3">{rules.map(([ok, label]) => <div key={label} className={`flex items-center gap-2 text-xs font-semibold transition ${ok ? "text-emerald-700" : "text-ink/40"}`}><span className={`grid h-5 w-5 place-items-center rounded-full transition ${ok ? "bg-emerald-100" : "bg-ink/5"}`}>{ok ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}</span>{label}</div>)}</div>;
+  return (
+    <div className="grid gap-2 rounded-2xl border border-ink/8 bg-cream/55 p-4 sm:grid-cols-3">
+      {rules.map(([ok, label]) => (
+        <div
+          key={label}
+          className={`flex items-center gap-2 text-xs font-semibold transition ${ok ? "text-emerald-700" : "text-ink/40"}`}
+        >
+          <span
+            className={`grid h-5 w-5 place-items-center rounded-full transition ${ok ? "bg-emerald-100" : "bg-ink/5"}`}
+          >
+            {ok ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+          </span>
+          {label}
+        </div>
+      ))}
+    </div>
+  );
 }
 
-function SocialButton({ icon: Icon, label, disabled, onClick }: { icon: ComponentType<{ className?: string }>; label: string; disabled: boolean; onClick: () => void }) {
-  return <button type="button" disabled={disabled} onClick={onClick} className="focus-ring flex h-14 items-center justify-center gap-2.5 rounded-2xl border border-ink/10 bg-white/55 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-card disabled:pointer-events-none disabled:opacity-50"><Icon className="h-5 w-5" />{label}</button>;
+function SocialButton({
+  icon: Icon,
+  label,
+  disabled,
+  onClick,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="focus-ring flex h-14 items-center justify-center gap-2.5 rounded-2xl border border-ink/10 bg-white/55 text-sm font-bold shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-card disabled:pointer-events-none disabled:opacity-50"
+    >
+      <Icon className="h-5 w-5" />
+      {label}
+    </button>
+  );
 }
 
-function Field({ label, name, type, autoComplete, placeholder, icon: Icon, onValue }: { label: string; name: string; type: string; autoComplete: string; placeholder: string; icon: ComponentType<{ className?: string }>; onValue?: (value: string) => void }) {
+function Field({
+  label,
+  name,
+  type,
+  autoComplete,
+  placeholder,
+  icon: Icon,
+  onValue,
+}: {
+  label: string;
+  name: string;
+  type: string;
+  autoComplete: string;
+  placeholder: string;
+  icon: ComponentType<{ className?: string }>;
+  onValue?: (value: string) => void;
+}) {
   const [show, setShow] = useState(false);
   const password = type === "password";
-  return <label className="block text-sm font-bold text-ink/85">{label}<div className="group relative mt-2"><Icon className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink/30 group-focus-within:text-wine" /><input required name={name} type={password && show ? "text" : type} onChange={(event) => onValue?.(event.target.value)} autoComplete={autoComplete} placeholder={placeholder} className="h-14 w-full rounded-2xl border border-ink/10 bg-white/60 pl-12 pr-14 text-[15px] font-medium outline-none transition placeholder:text-ink/30 focus:border-wine/45 focus:bg-white focus:ring-4 focus:ring-wine/8" />{password && <button type="button" onClick={() => setShow((current) => !current)} aria-label={show ? "Hide password" : "Show password"} className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full text-ink/35 hover:bg-wine/5 hover:text-wine">{show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>}</div></label>;
+  return (
+    <label className="block text-sm font-bold text-ink/85">
+      {label}
+      <div className="group relative mt-2">
+        <Icon className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-ink/30 group-focus-within:text-wine" />
+        <input
+          required
+          name={name}
+          type={password && show ? "text" : type}
+          onChange={(event) => onValue?.(event.target.value)}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          className="h-14 w-full rounded-2xl border border-ink/10 bg-white/60 pl-12 pr-14 text-[15px] font-medium outline-none transition placeholder:text-ink/30 focus:border-wine/45 focus:bg-white focus:ring-4 focus:ring-wine/8"
+        />
+        {password && (
+          <button
+            type="button"
+            onClick={() => setShow((current) => !current)}
+            aria-label={show ? "Hide password" : "Show password"}
+            className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full text-ink/35 hover:bg-wine/5 hover:text-wine"
+          >
+            {show ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </button>
+        )}
+      </div>
+    </label>
+  );
 }

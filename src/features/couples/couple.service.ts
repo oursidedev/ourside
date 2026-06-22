@@ -4,6 +4,7 @@
  */
 import { createClient } from "@/lib/supabase/client";
 import { dispatchNotificationEvent } from "@/features/notifications/notification.events";
+import { PRODUCT_STATUS } from "@/config/product-status";
 
 type Failure = { ok: false; message: string };
 export type PartnerStatus = { ok: true; hasCouple: boolean; coupleName?: string; memberCount: number; complete: boolean } | Failure;
@@ -40,6 +41,10 @@ export const coupleService = {
   },
 
   async createCoupleSpace(input: { name: string; startDate: string; style?: "classic" | "warm" | "minimal" }): Promise<{ ok: true; coupleId: string } | Failure> {
+    // Existing spaces remain available in portfolio mode; new spaces do not.
+    if (!PRODUCT_STATUS.publicSignupEnabled) {
+      return { ok: false, message: "Ourside is in portfolio mode. New shared spaces cannot be created." };
+    }
     const client = createClient();
     if (!client) return { ok: false, message: missingConfig };
     const current = await this.getPartnerStatus();
